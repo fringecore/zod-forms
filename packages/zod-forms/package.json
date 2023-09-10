@@ -2,7 +2,7 @@
     "name": "zod-forms",
     "version": "1.0.0",
     "description": "Strongly-typed headless forms for react with zod schemas.",
-    "main": "dist/index.jsx",
+    "main": "dist/index.js",
     "type": "module",
     "scripts": {
         "build": "tsc",
