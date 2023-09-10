@@ -1,21 +1,37 @@
 {
-  "name": "zod-forms",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@types/node": "20.6.0",
-    "@types/react": "18.2.21",
-    "@types/react-dom": "18.2.7",
-    "next": "13.4.19",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "typescript": "5.2.2",
-    "zod": "^3.22.2"
-  }
+    "name": "zod-forms",
+    "version": "1.0.0",
+    "description": "Strongly-typed headless forms for react with zod schemas.",
+    "main": "dist/index.jsx",
+    "type": "module",
+    "scripts": {
+        "build": "tsc",
+        "build:watch": "tsc -w --preserveWatchOutput"
+    },
+    "keywords": [
+        "react",
+        "zod",
+        "form",
+        "headless"
+    ],
+    "contributors": [
+        {
+            "name": "Afia Anjum Tamanna",
+            "email": "afiatamanna06@gmail.com",
+            "url": "https://afia-anjum-tamanna.vercel.app"
+        },
+        {
+            "name": "Omran Jamal",
+            "email": "omran@omranjamal.me",
+            "url": "https://omranjamal.me"
+        }
+    ],
+    "license": "MIT",
+    "devDependencies": {
+        "typescript": "5.2.2",
+        "@types/react": "18.2.21"
+    },
+    "peerDependencies": {
+        "react": ">13"
+    }
 }
