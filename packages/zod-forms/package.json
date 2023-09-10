@@ -1,0 +1,39 @@
+{
+    "name": "zod-forms",
+    "version": "1.0.0",
+    "description": "Strongly-typed headless forms for react with zod schemas.",
+    "main": "dist/index.jsx",
+    "type": "module",
+    "scripts": {
+        "build": "tsc",
+        "build:watch": "tsc -w --preserveWatchOutput",
+        "dev": "pnpm build:watch"
+    },
+    "keywords": [
+        "react",
+        "zod",
+        "form",
+        "headless"
+    ],
+    "contributors": [
+        {
+            "name": "Afia Anjum Tamanna",
+            "email": "afiatamanna06@gmail.com",
+            "url": "https://afia-anjum-tamanna.vercel.app"
+        },
+        {
+            "name": "Omran Jamal",
+            "email": "omran@omranjamal.me",
+            "url": "https://omranjamal.me"
+        }
+    ],
+    "license": "MIT",
+    "devDependencies": {
+        "typescript": "5.2.2",
+        "@types/react": ">=18.2.21",
+        "turbo": "1.10.13"
+    },
+    "peerDependencies": {
+        "react": ">=13"
+    }
+}
