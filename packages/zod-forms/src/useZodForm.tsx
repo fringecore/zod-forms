@@ -1,80 +1,59 @@
-import React, {ReactNode} from 'react';
-import {ZodObject, ZodObjectDef, ZodType, z} from 'zod';
+import React, {ReactElement} from 'react';
+import {
+    ZodObject,
+    ZodType,
+    z,
+    ZodString,
+    ZodNumber,
+    ZodEnum,
+    ZodArray,
+    ZodDiscriminatedUnion,
+    ZodRawShape,
+} from 'zod';
+import {ZodBoolean} from 'zod';
 
-interface InputProps {
-    children: ReactNode;
+export interface BooleanFieldPropsType {
+    children: (props: {
+        value: boolean;
+        onChange: (value: boolean) => void;
+    }) => ReactElement;
 }
 
-interface FieldStructure {
-    Input: React.FC<InputProps>;
-    fields?: NestedFieldStructure;
+export interface TerminateFieldType<INPUT_PROPS> {
+    Input: React.FC<INPUT_PROPS>;
 }
 
-interface NestedFieldStructure {
-    [key: string]: FieldStructure;
-}
-
-interface FormFields {
-    Fields: NestedFieldStructure;
-}
-
-type FieldsProps = {
-    children: React.ReactNode[];
+export type FormFieldsType<SCHEMA_TYPE extends ZodObject<any>> = {
+    [key in keyof SCHEMA_TYPE['shape']]: SCHEMA_TYPE['shape'][key] extends never
+        ? never
+        : SCHEMA_TYPE['shape'][key] extends ZodEnum<infer ENUM_ITEM_SCHEMA>
+        ? TerminateFieldType<BooleanFieldPropsType>
+        : SCHEMA_TYPE['shape'][key] extends ZodNumber
+        ? TerminateFieldType<BooleanFieldPropsType>
+        : SCHEMA_TYPE['shape'][key] extends ZodString
+        ? TerminateFieldType<BooleanFieldPropsType>
+        : SCHEMA_TYPE['shape'][key] extends ZodBoolean
+        ? TerminateFieldType<BooleanFieldPropsType>
+        : SCHEMA_TYPE['shape'][key] extends ZodObject<
+              infer SUB_OBJECT_SCHEMA extends ZodRawShape
+          >
+        ? FormFieldsType<SCHEMA_TYPE['shape'][key]>
+        : SCHEMA_TYPE['shape'][key] extends ZodArray<infer ARRAY_SCHEMA>
+        ? TerminateFieldType<BooleanFieldPropsType>
+        : SCHEMA_TYPE['shape'][key] extends ZodDiscriminatedUnion<
+              infer DISCRIMINATOR,
+              infer OPTIONS
+          >
+        ? TerminateFieldType<BooleanFieldPropsType>
+        : never;
 };
 
-type FormProps = {
-    children: (fieldName: string) => React.ReactNode;
-};
-
-const createFormStructure = <T extends ZodObject<any>>(schema: T) => {
-    type FieldKey = keyof T['shape'];
-
-    const createFields = (schema: ZodObject<any>) => {
-        const fields: any = {};
-
-        for (const key in schema.shape) {
-            if (schema.shape.hasOwnProperty(key)) {
-                const fieldSchema = schema.shape[key] as ZodType<any>;
-                if (fieldSchema instanceof ZodObject) {
-                    fields[key] = {
-                        Fields: createFields(fieldSchema),
-                    };
-                } else {
-                    fields[key] = {
-                        Input: ({children}: InputProps) => (
-                            <div>{children}</div>
-                        ),
-                    };
-                }
-            }
-        }
-
-        return fields;
-    };
-
+export const useZodForm = <SCHEMA_TYPE extends ZodObject<any>>(
+    schema: SCHEMA_TYPE,
+): {
+    fields: FormFieldsType<SCHEMA_TYPE>;
+} => {
     return {
-        Form: {
-            Fields: createFields(schema) as Record<
-                FieldKey,
-                {Input: React.FC<InputProps>}
-            >,
-        },
-    };
-};
-
-export const useZodForm = <T extends ZodObject<any>>(demoSchema: T) => {
-    type FieldKey = keyof T['shape'];
-
-    return {
-        Form: {
-            Fields: createFormStructure(demoSchema).Form.Fields, //as Record<FieldKey, { Input: React.FC<InputProps> }>,
-        },
-        FormComponent: ({children}: FormProps) => (
-            <form>
-                {Object.keys(demoSchema.shape).map((fieldName) =>
-                    children(fieldName),
-                )}
-            </form>
-        ),
-    };
+        fields: {},
+    } as any;
 };
