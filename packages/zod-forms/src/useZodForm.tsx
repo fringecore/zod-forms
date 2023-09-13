@@ -62,35 +62,40 @@ export type FormFieldsType<SCHEMA_TYPE extends ZodObject<any>> = {
     : never;
 };
 
-type FieldPropsMap = {
-    [key: string]: {
-        Input: React.FC<any>;
-    };
-};
+const fieldPropsProxy: Record<string, any> = new Proxy(
+    {},
+    {
+        get: (target, key) => {
+            if (key === 'string') {
+                return {
+                    Input: ({
+                        children,
+                    }: StringFieldPropsType) => {
+                        return children({ value: '', onChange: (value) => { } });
+                    },
+                };
+            } else if (key === 'number') {
+                return {
+                    Input: ({
+                        children,
+                    }: NumberFieldPropsType) => {
+                        return children({ value: 0, onChange: (value) => { } });
+                    },
+                };
+            } else if (key === 'boolean') {
+                return {
+                    Input: ({
+                        children,
+                    }: BooleanFieldPropsType) => {
+                        return children({ value: false, onChange: (value) => { } });
+                    },
+                };
+            }
 
-const fieldPropsMap: FieldPropsMap = {
-    string: {
-        Input: ({
-            children,
-        }: StringFieldPropsType) => {
-            return children({ value: '', onChange: (value) => { } });
+            return {};
         },
-    },
-    number: {
-        Input: ({
-            children,
-        }: NumberFieldPropsType) => {
-            return children({ value: 0, onChange: (value) => { } });
-        },
-    },
-    boolean: {
-        Input: ({
-            children,
-        }: BooleanFieldPropsType) => {
-            return children({ value: false, onChange: (value) => { } });
-        },
-    },
-};
+    }
+);
 
 const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(schema: SCHEMA_TYPE): {
     Form: {
@@ -106,8 +111,8 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(schema: SCHEMA_
             if (schema.shape.hasOwnProperty(key)) {
 
                 const fieldSchema = schema.shape[key] as ZodType<any>;
-                const fieldSchemaType = typeof fieldSchema._def as string;
-                const fieldProps = fieldPropsMap[fieldSchemaType];
+                const fieldSchemaType = typeof fieldSchema._def
+                const fieldProps = fieldPropsProxy[fieldSchemaType];
 
                 if (fieldProps) {
                     fields[key] = fieldProps;
