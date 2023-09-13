@@ -37,6 +37,10 @@ export interface TerminateFieldType<INPUT_PROPS> {
     Input: React.FC<INPUT_PROPS>;
 }
 
+interface InputProps {
+    children: ReactNode;
+}
+
 export type FormFieldsType<SCHEMA_TYPE extends ZodObject<any>> = {
     [key in keyof SCHEMA_TYPE['shape']]: SCHEMA_TYPE['shape'][key] extends never
     ? never
@@ -60,21 +64,6 @@ export type FormFieldsType<SCHEMA_TYPE extends ZodObject<any>> = {
     >
     ? TerminateFieldType<BooleanFieldPropsType>
     : never;
-};
-
-interface InputProps {
-    children: ReactNode;
-}
-
-interface NestedFieldStructure {
-    [key: string]: {
-        Input: React.FC<InputProps>;
-        fields?: NestedFieldStructure;
-    };
-}
-
-type FormProps = {
-    children: (fieldName: string) => React.ReactNode;
 };
 
 const createFormStructure = <T extends ZodObject<any>>(schema: T): {
