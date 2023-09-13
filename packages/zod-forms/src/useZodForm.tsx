@@ -128,16 +128,9 @@ export const useZodForm = <SCHEMA_TYPE extends ZodObject<any>>(
     schema: SCHEMA_TYPE,
 ): {
     fields: FormFieldsType<SCHEMA_TYPE>;
-    FormComponent: React.FC<FormProps>;
 } => {
 
     return {
         fields: createFormStructure(schema).Form.fields, //as Record<FieldKey, { Input: React.FC<InputProps> }>,
-
-        FormComponent: ({ children }: FormProps) => (
-            <form>
-                {Object.keys(schema.shape).map((fieldName) => children(fieldName))}
-            </form>
-        ),
     };
 };
