@@ -96,6 +96,14 @@ const fieldPropsProxy: Record<string, any> = new Proxy(
                         return children({ value: false, onChange: (value) => { } });
                     },
                 };
+            } else if (key === 'enum') {
+                return {
+                    Input: ({
+                        children,
+                    }: any) => {
+                        return children({ value: EnumFieldPropsType.BooleanFieldPropsType | EnumFieldPropsType.NumberFieldPropsType | EnumFieldPropsType.StringFieldPropsType, onChange: (value: any) => { } });
+                    },
+                };
             }
 
             return {};
