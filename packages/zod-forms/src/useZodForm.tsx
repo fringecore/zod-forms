@@ -62,6 +62,36 @@ export type FormFieldsType<SCHEMA_TYPE extends ZodObject<any>> = {
     : never;
 };
 
+type FieldPropsMap = {
+    [key: string]: {
+        Input: React.FC<any>;
+    };
+};
+
+const fieldPropsMap: FieldPropsMap = {
+    string: {
+        Input: ({
+            children,
+        }: StringFieldPropsType) => {
+            return children({ value: '', onChange: (value) => { } });
+        },
+    },
+    number: {
+        Input: ({
+            children,
+        }: NumberFieldPropsType) => {
+            return children({ value: 0, onChange: (value) => { } });
+        },
+    },
+    boolean: {
+        Input: ({
+            children,
+        }: BooleanFieldPropsType) => {
+            return children({ value: false, onChange: (value) => { } });
+        },
+    },
+};
+
 const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(schema: SCHEMA_TYPE): {
     Form: {
         fields: FormFieldsType<SCHEMA_TYPE>;
@@ -74,35 +104,13 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(schema: SCHEMA_
 
         for (const key in schema.shape) {
             if (schema.shape.hasOwnProperty(key)) {
+
                 const fieldSchema = schema.shape[key] as ZodType<any>;
-                if (fieldSchema instanceof ZodString) {
-                    fields[key] = {
-                        Input: ({
-                            children,
-                        }: StringFieldPropsType) => {
-                            return children({ value: fields[key], onChange: (value) => { } });
-                        },
-                    };
-                }
+                const fieldSchemaType = typeof fieldSchema._def as string;
+                const fieldProps = fieldPropsMap[fieldSchemaType];
 
-                else if (fieldSchema instanceof ZodNumber) {
-                    fields[key] = {
-                        Input: ({
-                            children,
-                        }: NumberFieldPropsType) => {
-                            return children({ value: fields[key], onChange: (value) => { } });
-                        },
-                    };
-                }
-
-                else if (fieldSchema instanceof ZodBoolean) {
-                    fields[key] = {
-                        Input: ({
-                            children,
-                        }: BooleanFieldPropsType) => {
-                            return children({ value: fields[key], onChange: (value) => { } });
-                        },
-                    };
+                if (fieldProps) {
+                    fields[key] = fieldProps;
                 }
 
                 else if (fieldSchema instanceof ZodObject) {
