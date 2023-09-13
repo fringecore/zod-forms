@@ -37,10 +37,6 @@ export interface TerminateFieldType<INPUT_PROPS> {
     Input: React.FC<INPUT_PROPS>;
 }
 
-interface InputProps {
-    children: ReactNode;
-}
-
 export type FormFieldsType<SCHEMA_TYPE extends ZodObject<any>> = {
     [key in keyof SCHEMA_TYPE['shape']]: SCHEMA_TYPE['shape'][key] extends never
     ? never
@@ -79,11 +75,43 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(schema: SCHEMA_
         for (const key in schema.shape) {
             if (schema.shape.hasOwnProperty(key)) {
                 const fieldSchema = schema.shape[key] as ZodType<any>;
-                if (fieldSchema instanceof ZodObject) {
+                if (fieldSchema instanceof ZodString) {
+                    fields[key] = {
+                        Input: ({
+                            children,
+                        }: StringFieldPropsType) => {
+                            return children({ value: fields[key], onChange: (value) => { } });
+                        },
+                    };
+                }
+
+                else if (fieldSchema instanceof ZodNumber) {
+                    fields[key] = {
+                        Input: ({
+                            children,
+                        }: NumberFieldPropsType) => {
+                            return children({ value: fields[key], onChange: (value) => { } });
+                        },
+                    };
+                }
+
+                else if (fieldSchema instanceof ZodBoolean) {
+                    fields[key] = {
+                        Input: ({
+                            children,
+                        }: BooleanFieldPropsType) => {
+                            return children({ value: fields[key], onChange: (value) => { } });
+                        },
+                    };
+                }
+
+                else if (fieldSchema instanceof ZodObject) {
                     fields[key] = {
                         Fields: createFields(fieldSchema),
                     };
-                } else if (fieldSchema instanceof ZodArray) {
+                }
+
+                else if (fieldSchema instanceof ZodArray) {
                     if (key === "rolls") {
                         fields[key] = {
                             Input: ({
@@ -100,15 +128,17 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(schema: SCHEMA_
                     } else {
                         fields[key] = {
                             Items: {
-                                Input: ({ children }: InputProps, index: number) => (
+                                Input: ({ children }: any, index: number) => (
                                     <div key={index}>{children}</div>
                                 ),
                             },
                         };
                     }
-                } else {
+                }
+
+                else {
                     fields[key] = {
-                        Input: ({ children }: InputProps) => <div>{children}</div>,
+                        Input: ({ children }: any) => <>{children}</>,
                     };
                 }
             }
