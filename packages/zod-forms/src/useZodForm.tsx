@@ -33,11 +33,10 @@ export interface NumberFieldPropsType {
     }) => ReactElement;
 }
 
-export interface EnumFieldPropsType {
-    children: (props: {
-        value: number | boolean | string | bigint;
-        onChange: (value: number | boolean | string | bigint) => void;
-    }) => ReactElement;
+export enum EnumFieldPropsType {
+    BooleanFieldPropsType,
+    StringFieldPropsType,
+    NumberFieldPropsType,
 }
 
 export interface TerminateFieldType<INPUT_PROPS> {
