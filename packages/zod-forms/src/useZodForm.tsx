@@ -19,6 +19,13 @@ export interface BooleanFieldPropsType {
     }) => ReactElement;
 }
 
+export interface StringFieldPropsType {
+    children: (props: {
+        value: string;
+        onChange: (value: string) => void;
+    }) => ReactElement;
+}
+
 export interface TerminateFieldType<INPUT_PROPS> {
     Input: React.FC<INPUT_PROPS>;
 }
@@ -31,7 +38,7 @@ export type FormFieldsType<SCHEMA_TYPE extends ZodObject<any>> = {
     : SCHEMA_TYPE['shape'][key] extends ZodNumber
     ? TerminateFieldType<BooleanFieldPropsType>
     : SCHEMA_TYPE['shape'][key] extends ZodString
-    ? TerminateFieldType<BooleanFieldPropsType>
+    ? TerminateFieldType<StringFieldPropsType>
     : SCHEMA_TYPE['shape'][key] extends ZodBoolean
     ? TerminateFieldType<BooleanFieldPropsType>
     : SCHEMA_TYPE['shape'][key] extends ZodObject<
