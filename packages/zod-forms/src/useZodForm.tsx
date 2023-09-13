@@ -9,8 +9,8 @@ import {
     ZodArray,
     ZodDiscriminatedUnion,
     ZodRawShape,
+    ZodBoolean,
 } from 'zod';
-import { ZodBoolean } from 'zod';
 
 export interface BooleanFieldPropsType {
     children: (props: {
@@ -112,7 +112,7 @@ const fieldPropsProxy: Record<string, any> = new Proxy(
 );
 
 const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(schema: SCHEMA_TYPE): {
-    Form: {
+    form: {
         fields: FormFieldsType<SCHEMA_TYPE>;
     };
 } => {
@@ -176,7 +176,7 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(schema: SCHEMA_
     };
 
     return {
-        Form: {
+        form: {
             fields: createFields(schema),
         },
     };
@@ -185,10 +185,14 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(schema: SCHEMA_
 export const useZodForm = <SCHEMA_TYPE extends ZodObject<any>>(
     schema: SCHEMA_TYPE,
 ): {
-    fields: FormFieldsType<SCHEMA_TYPE>;
+    form: {
+        fields: FormFieldsType<SCHEMA_TYPE>
+    };
 } => {
 
     return {
-        fields: createFormStructure(schema).Form.fields, //as Record<FieldKey, { Input: React.FC<InputProps> }>,
+        form: {
+            fields: createFormStructure(schema).form.fields, //as Record<FieldKey, { Input: React.FC<InputProps> }>,
+        }
     };
 };
