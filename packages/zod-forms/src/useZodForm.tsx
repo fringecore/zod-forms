@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode } from 'react';
+import React, { ReactElement } from 'react';
 import {
     ZodObject,
     ZodType,
@@ -33,6 +33,13 @@ export interface NumberFieldPropsType {
     }) => ReactElement;
 }
 
+export interface EnumFieldPropsType {
+    children: (props: {
+        value: number | boolean | string | bigint;
+        onChange: (value: number | boolean | string | bigint) => void;
+    }) => ReactElement;
+}
+
 export interface TerminateFieldType<INPUT_PROPS> {
     Input: React.FC<INPUT_PROPS>;
 }
@@ -41,7 +48,7 @@ export type FormFieldsType<SCHEMA_TYPE extends ZodObject<any>> = {
     [key in keyof SCHEMA_TYPE['shape']]: SCHEMA_TYPE['shape'][key] extends never
     ? never
     : SCHEMA_TYPE['shape'][key] extends ZodEnum<infer ENUM_ITEM_SCHEMA>
-    ? TerminateFieldType<BooleanFieldPropsType>
+    ? TerminateFieldType<EnumFieldPropsType>
     : SCHEMA_TYPE['shape'][key] extends ZodNumber
     ? TerminateFieldType<NumberFieldPropsType>
     : SCHEMA_TYPE['shape'][key] extends ZodString
@@ -105,6 +112,7 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(schema: SCHEMA_
     type FieldKey = keyof SCHEMA_TYPE["shape"];
 
     const createFields = (schema: ZodObject<any>) => {
+
         const fields: any = {};
 
         for (const key in schema.shape) {
