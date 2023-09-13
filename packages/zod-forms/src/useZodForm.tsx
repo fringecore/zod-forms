@@ -66,12 +66,12 @@ export type FormFieldsType<SCHEMA_TYPE extends ZodObject<any>> = {
     : never;
 };
 
-const createFormStructure = <T extends ZodObject<any>>(schema: T): {
+const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(schema: SCHEMA_TYPE): {
     Form: {
-        fields: FormFieldsType<T>;
+        fields: FormFieldsType<SCHEMA_TYPE>;
     };
 } => {
-    type FieldKey = keyof T["shape"];
+    type FieldKey = keyof SCHEMA_TYPE["shape"];
 
     const createFields = (schema: ZodObject<any>) => {
         const fields: any = {};
@@ -114,10 +114,7 @@ const createFormStructure = <T extends ZodObject<any>>(schema: T): {
             }
         }
 
-        return fields/* as Record<
-        FieldKey,
-        { Input: React.FC<InputProps> }
-      >;*/
+        return fields;
     };
 
     return {
