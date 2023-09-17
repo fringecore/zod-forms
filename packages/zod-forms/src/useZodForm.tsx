@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, {ReactElement} from 'react';
 import {
     ZodObject,
     ZodType,
@@ -45,102 +45,99 @@ export interface TerminateFieldType<INPUT_PROPS> {
 
 export type FormFieldsType<SCHEMA_TYPE extends ZodObject<any>> = {
     [key in keyof SCHEMA_TYPE['shape']]: SCHEMA_TYPE['shape'][key] extends never
-    ? never
-    : SCHEMA_TYPE['shape'][key] extends ZodEnum<infer ENUM_ITEM_SCHEMA>
-    ? TerminateFieldType<EnumFieldPropsType>
-    : SCHEMA_TYPE['shape'][key] extends ZodNumber
-    ? TerminateFieldType<NumberFieldPropsType>
-    : SCHEMA_TYPE['shape'][key] extends ZodString
-    ? TerminateFieldType<StringFieldPropsType>
-    : SCHEMA_TYPE['shape'][key] extends ZodBoolean
-    ? TerminateFieldType<BooleanFieldPropsType>
-    : SCHEMA_TYPE['shape'][key] extends ZodObject<
-        infer SUB_OBJECT_SCHEMA extends ZodRawShape
-    >
-    ? FormFieldsType<SCHEMA_TYPE['shape'][key]>
-    : SCHEMA_TYPE['shape'][key] extends ZodArray<infer ARRAY_SCHEMA>
-    ? TerminateFieldType<BooleanFieldPropsType>
-    : SCHEMA_TYPE['shape'][key] extends ZodDiscriminatedUnion<
-        infer DISCRIMINATOR,
-        infer OPTIONS
-    >
-    ? TerminateFieldType<BooleanFieldPropsType>
-    : never;
+        ? never
+        : SCHEMA_TYPE['shape'][key] extends ZodEnum<infer ENUM_ITEM_SCHEMA>
+        ? TerminateFieldType<EnumFieldPropsType>
+        : SCHEMA_TYPE['shape'][key] extends ZodNumber
+        ? TerminateFieldType<NumberFieldPropsType>
+        : SCHEMA_TYPE['shape'][key] extends ZodString
+        ? TerminateFieldType<StringFieldPropsType>
+        : SCHEMA_TYPE['shape'][key] extends ZodBoolean
+        ? TerminateFieldType<BooleanFieldPropsType>
+        : SCHEMA_TYPE['shape'][key] extends ZodObject<
+              infer SUB_OBJECT_SCHEMA extends ZodRawShape
+          >
+        ? FormFieldsType<SCHEMA_TYPE['shape'][key]>
+        : SCHEMA_TYPE['shape'][key] extends ZodArray<infer ARRAY_SCHEMA>
+        ? TerminateFieldType<BooleanFieldPropsType>
+        : SCHEMA_TYPE['shape'][key] extends ZodDiscriminatedUnion<
+              infer DISCRIMINATOR,
+              infer OPTIONS
+          >
+        ? TerminateFieldType<BooleanFieldPropsType>
+        : never;
 };
 
 const fieldPropsProxy: Record<string, any> = new Proxy(
     {},
     {
         get: (target, key) => {
-            if (key === 'string') {
+            if (key === 'ZodString') {
                 return {
-                    Input: ({
-                        children,
-                    }: StringFieldPropsType) => {
-                        return children({ value: '', onChange: (value) => { } });
+                    Input: ({children}: StringFieldPropsType) => {
+                        return children({value: '', onChange: (value) => {}});
                     },
                 };
-            } else if (key === 'number') {
+            } else if (key === 'ZodNumber') {
                 return {
-                    Input: ({
-                        children,
-                    }: NumberFieldPropsType) => {
-                        return children({ value: 0, onChange: (value) => { } });
+                    Input: ({children}: NumberFieldPropsType) => {
+                        return children({value: 0, onChange: (value) => {}});
                     },
                 };
-            } else if (key === 'boolean') {
+            } else if (key === 'ZodBoolean') {
                 return {
-                    Input: ({
-                        children,
-                    }: BooleanFieldPropsType) => {
-                        return children({ value: false, onChange: (value) => { } });
+                    Input: ({children}: BooleanFieldPropsType) => {
+                        return children({
+                            value: false,
+                            onChange: (value) => {},
+                        });
                     },
                 };
-            } else if (key === 'enum') {
+            } else if (key === 'ZodEnum') {
                 return {
-                    Input: ({
-                        children,
-                    }: any) => {
-                        return children({ value: EnumFieldPropsType.BooleanFieldPropsType | EnumFieldPropsType.NumberFieldPropsType | EnumFieldPropsType.StringFieldPropsType, onChange: (value: any) => { } });
+                    Input: ({children}: any) => {
+                        return children({
+                            value:
+                                EnumFieldPropsType.BooleanFieldPropsType |
+                                EnumFieldPropsType.NumberFieldPropsType |
+                                EnumFieldPropsType.StringFieldPropsType,
+                            onChange: (value: any) => {},
+                        });
                     },
                 };
             }
 
             return {};
         },
-    }
+    },
 );
 
-const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(schema: SCHEMA_TYPE): {
+const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
+    schema: SCHEMA_TYPE,
+): {
     form: {
         fields: FormFieldsType<SCHEMA_TYPE>;
     };
 } => {
-    type FieldKey = keyof SCHEMA_TYPE["shape"];
+    type FieldKey = keyof SCHEMA_TYPE['shape'];
 
     const createFields = (schema: ZodObject<any>) => {
-
         const fields: any = {};
 
         for (const key in schema.shape) {
             if (schema.shape.hasOwnProperty(key)) {
-
                 const fieldSchema = schema.shape[key] as ZodType<any>;
-                const fieldSchemaType = typeof fieldSchema._def
+                const fieldSchemaType = (fieldSchema._def as any).typeName;
                 const fieldProps = fieldPropsProxy[fieldSchemaType];
 
                 if (fieldProps) {
                     fields[key] = fieldProps;
-                }
-
-                else if (fieldSchema instanceof ZodObject) {
+                } else if (fieldSchema instanceof ZodObject) {
                     fields[key] = {
                         Fields: createFields(fieldSchema),
                     };
-                }
-
-                else if (fieldSchema instanceof ZodArray) {
-                    if (key === "rolls") {
+                } else if (fieldSchema instanceof ZodArray) {
+                    if (key === 'rolls') {
                         fields[key] = {
                             Input: ({
                                 children,
@@ -150,23 +147,24 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(schema: SCHEMA_
                                     addItems: () => void;
                                 }) => React.ReactNode;
                             }) => {
-                                return children({ items: [], addItems: () => { } });
+                                return children({
+                                    items: [],
+                                    addItems: () => {},
+                                });
                             },
                         };
                     } else {
                         fields[key] = {
                             Items: {
-                                Input: ({ children }: any, index: number) => (
+                                Input: ({children}: any, index: number) => (
                                     <div key={index}>{children}</div>
                                 ),
                             },
                         };
                     }
-                }
-
-                else {
+                } else {
                     fields[key] = {
-                        Input: ({ children }: any) => <>{children}</>,
+                        Input: ({children}: any) => <>{children}</>,
                     };
                 }
             }
@@ -186,13 +184,12 @@ export const useZodForm = <SCHEMA_TYPE extends ZodObject<any>>(
     schema: SCHEMA_TYPE,
 ): {
     form: {
-        fields: FormFieldsType<SCHEMA_TYPE>
+        fields: FormFieldsType<SCHEMA_TYPE>;
     };
 } => {
-
     return {
         form: {
             fields: createFormStructure(schema).form.fields, //as Record<FieldKey, { Input: React.FC<InputProps> }>,
-        }
+        },
     };
 };

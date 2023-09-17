@@ -9,11 +9,11 @@ const schema = z.object({
 });
 
 function App() {
-    const { form } = useZodForm(schema);
+    const {form} = useZodForm(schema);
 
     return (
         <>
-            <form.fields.address.is_permanent.Input>
+            {/*<form.fields.address.is_permanent.Input>
                 {({value, onChange}: {value: boolean, onChange: (value: boolean) => void}) => {
                     return (
                         <div onClick={() => onChange(!value)}>
@@ -21,7 +21,24 @@ function App() {
                         </div>
                     );
                 }}
-            </form.fields.address.is_permanent.Input>
+            </form.fields.address.is_permanent.Input>*/}
+            <form.fields.name.Input>
+                {({
+                    value,
+                    onChange,
+                }: {
+                    value: string;
+                    onChange: (value: string) => void;
+                }) => (
+                    <input
+                        className="border-2 border-black rounded px-4 py-2"
+                        onChange={(e) => {
+                            onChange(e.target.value);
+                            console.log(value);
+                        }}
+                    />
+                )}
+            </form.fields.name.Input>
         </>
     );
 }
