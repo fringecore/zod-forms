@@ -4,6 +4,7 @@ import z from 'zod';
 const schema = z.object({
     name: z.string(),
     address: z.object({
+        post_code: z.number(),
         is_permanent: z.boolean(),
     }),
 });
@@ -13,15 +14,25 @@ function App() {
 
     return (
         <>
-            {/*<form.fields.address.is_permanent.Input>
-                {({value, onChange}: {value: boolean, onChange: (value: boolean) => void}) => {
+            <form.fields.address.post_code.Input>
+                {({
+                    value,
+                    onChange,
+                }: {
+                    value: number;
+                    onChange: (value: number) => void;
+                }) => {
                     return (
-                        <div onClick={() => onChange(!value)}>
-                            {value ? <>✅</> : <>☐</>}
-                        </div>
+                        <input
+                            className="border-2 border-black rounded px-4 py-2"
+                            onChange={(e) => {
+                                onChange(parseInt(e.target.value));
+                                console.log(value);
+                            }}
+                        />
                     );
                 }}
-            </form.fields.address.is_permanent.Input>*/}
+            </form.fields.address.post_code.Input>
             <form.fields.name.Input>
                 {({
                     value,

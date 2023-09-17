@@ -1,4 +1,4 @@
-import React, {ReactElement} from 'react';
+import React, { ReactElement } from 'react';
 import {
     ZodObject,
     ZodType,
@@ -45,27 +45,27 @@ export interface TerminateFieldType<INPUT_PROPS> {
 
 export type FormFieldsType<SCHEMA_TYPE extends ZodObject<any>> = {
     [key in keyof SCHEMA_TYPE['shape']]: SCHEMA_TYPE['shape'][key] extends never
-        ? never
-        : SCHEMA_TYPE['shape'][key] extends ZodEnum<infer ENUM_ITEM_SCHEMA>
-        ? TerminateFieldType<EnumFieldPropsType>
-        : SCHEMA_TYPE['shape'][key] extends ZodNumber
-        ? TerminateFieldType<NumberFieldPropsType>
-        : SCHEMA_TYPE['shape'][key] extends ZodString
-        ? TerminateFieldType<StringFieldPropsType>
-        : SCHEMA_TYPE['shape'][key] extends ZodBoolean
-        ? TerminateFieldType<BooleanFieldPropsType>
-        : SCHEMA_TYPE['shape'][key] extends ZodObject<
-              infer SUB_OBJECT_SCHEMA extends ZodRawShape
-          >
-        ? FormFieldsType<SCHEMA_TYPE['shape'][key]>
-        : SCHEMA_TYPE['shape'][key] extends ZodArray<infer ARRAY_SCHEMA>
-        ? TerminateFieldType<BooleanFieldPropsType>
-        : SCHEMA_TYPE['shape'][key] extends ZodDiscriminatedUnion<
-              infer DISCRIMINATOR,
-              infer OPTIONS
-          >
-        ? TerminateFieldType<BooleanFieldPropsType>
-        : never;
+    ? never
+    : SCHEMA_TYPE['shape'][key] extends ZodEnum<infer ENUM_ITEM_SCHEMA>
+    ? TerminateFieldType<EnumFieldPropsType>
+    : SCHEMA_TYPE['shape'][key] extends ZodNumber
+    ? TerminateFieldType<NumberFieldPropsType>
+    : SCHEMA_TYPE['shape'][key] extends ZodString
+    ? TerminateFieldType<StringFieldPropsType>
+    : SCHEMA_TYPE['shape'][key] extends ZodBoolean
+    ? TerminateFieldType<BooleanFieldPropsType>
+    : SCHEMA_TYPE['shape'][key] extends ZodObject<
+        infer SUB_OBJECT_SCHEMA extends ZodRawShape
+    >
+    ? FormFieldsType<SCHEMA_TYPE['shape'][key]>
+    : SCHEMA_TYPE['shape'][key] extends ZodArray<infer ARRAY_SCHEMA>
+    ? TerminateFieldType<BooleanFieldPropsType>
+    : SCHEMA_TYPE['shape'][key] extends ZodDiscriminatedUnion<
+        infer DISCRIMINATOR,
+        infer OPTIONS
+    >
+    ? TerminateFieldType<BooleanFieldPropsType>
+    : never;
 };
 
 const fieldPropsProxy: Record<string, any> = new Proxy(
@@ -74,34 +74,34 @@ const fieldPropsProxy: Record<string, any> = new Proxy(
         get: (target, key) => {
             if (key === 'ZodString') {
                 return {
-                    Input: ({children}: StringFieldPropsType) => {
-                        return children({value: '', onChange: (value) => {}});
+                    Input: ({ children }: StringFieldPropsType) => {
+                        return children({ value: '', onChange: (value) => { } });
                     },
                 };
             } else if (key === 'ZodNumber') {
                 return {
-                    Input: ({children}: NumberFieldPropsType) => {
-                        return children({value: 0, onChange: (value) => {}});
+                    Input: ({ children }: NumberFieldPropsType) => {
+                        return children({ value: 0, onChange: (value) => { } });
                     },
                 };
             } else if (key === 'ZodBoolean') {
                 return {
-                    Input: ({children}: BooleanFieldPropsType) => {
+                    Input: ({ children }: BooleanFieldPropsType) => {
                         return children({
                             value: false,
-                            onChange: (value) => {},
+                            onChange: (value) => { },
                         });
                     },
                 };
             } else if (key === 'ZodEnum') {
                 return {
-                    Input: ({children}: any) => {
+                    Input: ({ children }: any) => {
                         return children({
                             value:
                                 EnumFieldPropsType.BooleanFieldPropsType |
                                 EnumFieldPropsType.NumberFieldPropsType |
                                 EnumFieldPropsType.StringFieldPropsType,
-                            onChange: (value: any) => {},
+                            onChange: (value: any) => { },
                         });
                     },
                 };
@@ -130,12 +130,11 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
                 const fieldSchemaType = (fieldSchema._def as any).typeName;
                 const fieldProps = fieldPropsProxy[fieldSchemaType];
 
-                if (fieldProps) {
+                if (Object.keys(fieldProps).length !== 0) {
                     fields[key] = fieldProps;
-                } else if (fieldSchema instanceof ZodObject) {
-                    fields[key] = {
-                        Fields: createFields(fieldSchema),
-                    };
+                } else if (Object.keys(fieldProps).length === 0 &&
+                    fieldSchema instanceof ZodObject) {
+                    fields[key] = createFields(fieldSchema);
                 } else if (fieldSchema instanceof ZodArray) {
                     if (key === 'rolls') {
                         fields[key] = {
@@ -149,14 +148,14 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
                             }) => {
                                 return children({
                                     items: [],
-                                    addItems: () => {},
+                                    addItems: () => { },
                                 });
                             },
                         };
                     } else {
                         fields[key] = {
                             Items: {
-                                Input: ({children}: any, index: number) => (
+                                Input: ({ children }: any, index: number) => (
                                     <div key={index}>{children}</div>
                                 ),
                             },
@@ -164,7 +163,7 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
                     }
                 } else {
                     fields[key] = {
-                        Input: ({children}: any) => <>{children}</>,
+                        Input: ({ children }: any) => <>{children}</>,
                     };
                 }
             }
