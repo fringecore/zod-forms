@@ -22,9 +22,6 @@ function App() {
                     );
                 }}
             </form.fields.address.is_permanent.Input>
-            <form.fields.name.Input>
-                
-            </form.fields.name.Input>
         </>
     );
 }
