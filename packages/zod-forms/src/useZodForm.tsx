@@ -66,7 +66,7 @@ export type FormFieldsType<SCHEMA_TYPE extends ZodObject<any>> = {
           >
         ? FormFieldsType<SCHEMA_TYPE['shape'][key]>
         : SCHEMA_TYPE['shape'][key] extends ZodArray<infer ARRAY_SCHEMA>
-        ? TerminateFieldType<BooleanFieldPropsType>
+        ? TerminateFieldType<ArrayFieldPropsType>
         : SCHEMA_TYPE['shape'][key] extends ZodDiscriminatedUnion<
               infer DISCRIMINATOR,
               infer OPTIONS

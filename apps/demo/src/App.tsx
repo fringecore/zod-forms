@@ -7,6 +7,7 @@ const schema = z.object({
         post_code: z.number(),
         is_permanent: z.boolean(),
     }),
+    rolls: z.array(z.any()),
 });
 
 function App() {
@@ -50,6 +51,25 @@ function App() {
                     />
                 )}
             </form.fields.name.Input>
+            <form.fields.rolls.Input>
+                {({
+                    items,
+                    addItems,
+                }: {
+                    items: Array<unknown>;
+                    addItems: (item: unknown) => void;
+                }) => (
+                    <input
+                        className="border-2 border-black rounded px-4 py-2"
+                        onChange={(e) => {
+                            const item = e.target.value.split(', ');
+                            items.push(item);
+                            console.log(items);
+                            addItems(items)
+                        }}
+                    />
+                )}
+            </form.fields.rolls.Input>
         </>
     );
 }
