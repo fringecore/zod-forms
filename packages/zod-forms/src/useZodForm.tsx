@@ -125,7 +125,7 @@ const fieldPropsProxy: Record<string, any> = new Proxy(
     },
 );
 
-const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
+/*const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
     schema: SCHEMA_TYPE,
 ): {
     form: {
@@ -159,7 +159,7 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
                             ),
                         },
                     };
-                }*/
+                }//
                     fields[key] = {
                         Input: ({children}: any) => <>{children}</>,
                     };
@@ -175,6 +175,52 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
             fields: createFields(schema),
         },
     };
+};*/
+
+const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
+    schema: SCHEMA_TYPE,
+    memo: Map<ZodObject<any>, any> = new Map(),
+): {
+    form: {
+        fields: FormFieldsType<SCHEMA_TYPE>;
+    };
+} => {
+    if (memo.has(schema)) {
+        return memo.get(schema);
+    }
+
+    const fields: any = {};
+
+    for (const key in schema.shape) {
+        if (schema.shape.hasOwnProperty(key)) {
+            const fieldSchema = schema.shape[key] as ZodType<any>;
+            const fieldSchemaType = (fieldSchema._def as any).typeName;
+            const fieldProps = fieldPropsProxy[fieldSchemaType];
+
+            if (Object.keys(fieldProps).length !== 0) {
+                fields[key] = fieldProps;
+            } else if (fieldSchema instanceof ZodObject) {
+                fields[key] = createFormStructure(
+                    fieldSchema,
+                    memo,
+                ).form.fields;
+            } else {
+                fields[key] = {
+                    Input: ({children}: any) => <>{children}</>,
+                };
+            }
+        }
+    }
+
+    const result = {
+        form: {
+            fields,
+        },
+    };
+
+    memo.set(schema, result);
+
+    return result;
 };
 
 export const useZodForm = <SCHEMA_TYPE extends ZodObject<any>>(
