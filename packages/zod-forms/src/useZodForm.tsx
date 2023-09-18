@@ -176,16 +176,13 @@ const fieldPropsProxy: Record<string, any> = new Proxy(
     };
 };*/
 
+const memoCache = new WeakMap<ZodObject<any>, any>();
+
 const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
     schema: SCHEMA_TYPE,
-    memo: Map<ZodObject<any>, any> = new Map(),
-): {
-    form: {
-        fields: FormFieldsType<SCHEMA_TYPE>;
-    };
-} => {
-    if (memo.has(schema)) {
-        return memo.get(schema);
+): {form: {fields: FormFieldsType<SCHEMA_TYPE>}} => {
+    if (memoCache.has(schema)) {
+        return memoCache.get(schema);
     }
 
     const fields: any = {};
@@ -199,10 +196,7 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
             if (Object.keys(fieldProps).length !== 0) {
                 fields[key] = fieldProps;
             } else if (fieldSchema instanceof ZodObject) {
-                fields[key] = createFormStructure(
-                    fieldSchema,
-                    memo,
-                ).form.fields;
+                fields[key] = createFormStructure(fieldSchema).form.fields;
             } else {
                 fields[key] = {
                     Input: ({children}: any) => <>{children}</>,
@@ -217,7 +211,7 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
         },
     };
 
-    memo.set(schema, result);
+    memoCache.set(schema, result);
 
     return result;
 };
