@@ -2,7 +2,6 @@ import React, {ReactElement} from 'react';
 import {
     ZodObject,
     ZodType,
-    z,
     ZodString,
     ZodNumber,
     ZodEnum,
@@ -232,7 +231,7 @@ export const useZodForm = <SCHEMA_TYPE extends ZodObject<any>>(
 } => {
     return {
         form: {
-            fields: createFormStructure(schema).form.fields, //as Record<FieldKey, { Input: React.FC<InputProps> }>,
+            fields: createFormStructure(schema).form.fields,
         },
     };
 };

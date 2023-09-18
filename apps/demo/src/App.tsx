@@ -65,7 +65,7 @@ function App() {
                             const item = e.target.value.split(', ');
                             items.push(item);
                             console.log(items);
-                            addItems(items)
+                            addItems(items);
                         }}
                     />
                 )}
