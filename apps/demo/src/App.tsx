@@ -8,6 +8,7 @@ const schema = z.object({
         middle: z.string().optional(),
         last: z.string(),
     }),
+    address: z.string(),
     age: z.number().min(18).max(150),
     favoriteColor: z.enum(['red', 'blue', 'green']),
     favoriteFoods: z.array(z.string()),
@@ -60,7 +61,7 @@ function MainForm() {
     //const data = useFormData(form);
 
     // useEffect(() => {
-        // console.log(data.name.first, data.name.middle, data.name.last);
+    // console.log(data.name.first, data.name.middle, data.name.last);
     // }, [data.name]);
 
     return (
@@ -68,15 +69,30 @@ function MainForm() {
             {/*<NameForm form={form} />*/}
             <form.age.Input>
                 {({value, onChange}) => {
+                    console.log(value)
                     return (
                         <input
                             type={'number'}
                             value={value}
-                            onChange={(ev) => onChange(value = parseInt(ev.target.value))}
+                            onChange={(ev) =>
+                                onChange(parseInt(ev.target.value))
+                            }
                         />
                     );
                 }}
             </form.age.Input>
+            <form.address.Input>
+                {({value, onChange}) => {
+                    console.log(value) 
+                    return (
+                        <input
+                            type={'text'}
+                            value={value}
+                            onChange={(ev) => { onChange(ev.target.value); }}
+                        />
+                    );
+                }}
+            </form.address.Input>
         </>
     );
 }

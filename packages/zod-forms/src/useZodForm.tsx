@@ -10,25 +10,13 @@ import {
     ZodRawShape,
     ZodBoolean,
 } from 'zod';
+import StringField, { StringFieldPropsType } from './StringField';
+import NumberField, { NumberFieldPropsType } from './NumberField';
 
 export interface BooleanFieldPropsType {
     children: (props: {
         value: boolean;
         onChange: (value: boolean) => void;
-    }) => ReactElement;
-}
-
-export interface StringFieldPropsType {
-    children: (props: {
-        value: string;
-        onChange: (value: string) => void;
-    }) => ReactElement;
-}
-
-export interface NumberFieldPropsType {
-    children: (props: {
-        value: number;
-        onChange: (value: number) => void;
     }) => ReactElement;
 }
 
@@ -81,13 +69,13 @@ const fieldPropsProxy: Record<string, any> = new Proxy(
             if (key === 'ZodString') {
                 return {
                     Input: ({children}: StringFieldPropsType) => {
-                        return children({value: '', onChange: (value) => {}});
+                        return <StringField>{children}</StringField>;
                     },
                 };
             } else if (key === 'ZodNumber') {
                 return {
                     Input: ({children}: NumberFieldPropsType) => {
-                        return children({value: 0, onChange: (value) => {}});
+                        return <NumberField>{children}</NumberField>;
                     },
                 };
             } else if (key === 'ZodBoolean') {
