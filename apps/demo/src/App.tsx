@@ -61,7 +61,7 @@ function MainForm() {
     //const data = useFormData(form);
 
     // useEffect(() => {
-    // console.log(data.name.first, data.name.middle, data.name.last);
+    // console.log(data.name.first, data.name.mid linuxlite   main  ~  zod-forms 
     // }, [data.name]);
 
     return (
@@ -69,7 +69,7 @@ function MainForm() {
             {/*<NameForm form={form} />*/}
             <form.age.Input>
                 {({value, onChange}) => {
-                    console.log(value)
+                    console.log(value);
                     return (
                         <input
                             type={'number'}
@@ -83,16 +83,32 @@ function MainForm() {
             </form.age.Input>
             <form.address.Input>
                 {({value, onChange}) => {
-                    console.log(value) 
+                    console.log(value);
                     return (
                         <input
                             type={'text'}
                             value={value}
-                            onChange={(ev) => { onChange(ev.target.value); }}
+                            onChange={(ev) => {
+                                onChange(ev.target.value);
+                            }}
                         />
                     );
                 }}
             </form.address.Input>
+            <form.name.first.Input>
+                {({value, onChange}) => {
+                    console.log(value);
+                    return (
+                        <input
+                            type={'text'}
+                            value={value}
+                            onChange={(ev) => {
+                                onChange(ev.target.value);
+                            }}
+                        />
+                    );
+                }}
+            </form.name.first.Input>
         </>
     );
 }

@@ -12,13 +12,7 @@ import {
 } from 'zod';
 import StringField, { StringFieldPropsType } from './StringField';
 import NumberField, { NumberFieldPropsType } from './NumberField';
-
-export interface BooleanFieldPropsType {
-    children: (props: {
-        value: boolean;
-        onChange: (value: boolean) => void;
-    }) => ReactElement;
-}
+import BooleanField, { BooleanFieldPropsType } from './BooleanField';
 
 export interface ArrayFieldPropsType {
     children: (props: {
@@ -81,10 +75,7 @@ const fieldPropsProxy: Record<string, any> = new Proxy(
             } else if (key === 'ZodBoolean') {
                 return {
                     Input: ({children}: BooleanFieldPropsType) => {
-                        return children({
-                            value: false,
-                            onChange: (value) => {},
-                        });
+                        return <BooleanField>{children}</BooleanField>;
                     },
                 };
             } else if (key === 'ZodArray') {
@@ -184,7 +175,7 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
             if (Object.keys(fieldProps).length !== 0) {
                 form[key] = fieldProps;
             } else if (fieldSchema instanceof ZodObject) {
-                form[key] = createFormStructure(fieldSchema).form.fields;
+                form[key] = createFormStructure(fieldSchema).form;
             } else {
                 form[key] = {
                     Input: ({children}: any) => <>{children}</>,
