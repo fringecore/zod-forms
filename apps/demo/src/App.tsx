@@ -14,17 +14,10 @@ const schema = z.object({
     isAwesome: z.boolean(),
 });
 
-function NameForm() {
-    const {from, useFormData} = useZodForm(schema.shape.name);
-    const data = useFormData();
-
-    useEffect(() => {
-        console.log(data.first);
-    }, [data]);
-
+function NameForm({form}: {form: Form<z.infer<typeof schema>>}) {
     return (
         <>
-            <form.first.Input>
+            <form.name.first.Input>
                 {(value, onChange) => {
                     return (
                         <input
@@ -34,8 +27,8 @@ function NameForm() {
                         />
                     );
                 }}
-            </form.first.Input>
-            <form.middle.Input>
+            </form.name.first.Input>
+            <form.name.middle.Input>
                 {(value, onChange) => {
                     return (
                         <input
@@ -45,8 +38,8 @@ function NameForm() {
                         />
                     );
                 }}
-            </form.middle.Input>
-            <form.last.Input>
+            </form.name.middle.Input>
+            <form.name.last.Input>
                 {(value, onChange) => {
                     return (
                         <input
@@ -56,14 +49,14 @@ function NameForm() {
                         />
                     );
                 }}
-            </form.last.Input>
+            </form.name.last.Input>
         </>
     );
 }
 
 function MainForm() {
-    const {form, useFormData} = useZodForm(schema);
-    const data = useFormData();
+    const {form, getData} = useZodForm(schema);
+    const data = useFormData(form);
 
     useEffect(() => {
         console.log(data.name.first, data.name.middle, data.name.last);
@@ -71,7 +64,7 @@ function MainForm() {
 
     return (
         <>
-            <NameForm />
+            <NameForm form={form} />
             <form.age.Input>
                 {(value, onChange) => {
                     return (
