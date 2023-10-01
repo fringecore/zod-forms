@@ -180,12 +180,12 @@ const memoCache = new WeakMap<ZodObject<any>, any>();
 
 const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
     schema: SCHEMA_TYPE,
-): {form: {fields: FormFieldsType<SCHEMA_TYPE>}} => {
+): {form: FormFieldsType<SCHEMA_TYPE>} => {
     if (memoCache.has(schema)) {
         return memoCache.get(schema);
     }
 
-    const fields: any = {};
+    const form: any = {};
 
     for (const key in schema.shape) {
         if (schema.shape.hasOwnProperty(key)) {
@@ -194,11 +194,11 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
             const fieldProps = fieldPropsProxy[fieldSchemaType];
 
             if (Object.keys(fieldProps).length !== 0) {
-                fields[key] = fieldProps;
+                form[key] = fieldProps;
             } else if (fieldSchema instanceof ZodObject) {
-                fields[key] = createFormStructure(fieldSchema).form.fields;
+                form[key] = createFormStructure(fieldSchema).form.fields;
             } else {
-                fields[key] = {
+                form[key] = {
                     Input: ({children}: any) => <>{children}</>,
                 };
             }
@@ -206,9 +206,7 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
     }
 
     const result = {
-        form: {
-            fields,
-        },
+        form: form,
     };
 
     memoCache.set(schema, result);
@@ -219,13 +217,9 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
 export const useZodForm = <SCHEMA_TYPE extends ZodObject<any>>(
     schema: SCHEMA_TYPE,
 ): {
-    form: {
-        fields: FormFieldsType<SCHEMA_TYPE>;
-    };
+    form: FormFieldsType<SCHEMA_TYPE>;
 } => {
     return {
-        form: {
-            fields: createFormStructure(schema).form.fields,
-        },
+        form: createFormStructure(schema).form,
     };
 };

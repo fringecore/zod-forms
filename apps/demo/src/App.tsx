@@ -1,6 +1,6 @@
 import z from 'zod';
 import {useZodForm} from 'zod-forms';
-import {useEffect} from 'react';
+//import {useEffect} from 'react';
 
 const schema = z.object({
     name: z.object({
@@ -14,7 +14,7 @@ const schema = z.object({
     isAwesome: z.boolean(),
 });
 
-function NameForm({form}: {form: Form<z.infer<typeof schema>>}) {
+/*function NameForm({form}: {form: Form<z.infer<typeof schema>>}) {
     return (
         <>
             <form.name.first.Input>
@@ -52,26 +52,27 @@ function NameForm({form}: {form: Form<z.infer<typeof schema>>}) {
             </form.name.last.Input>
         </>
     );
-}
+}*/
 
 function MainForm() {
-    const {form, getData} = useZodForm(schema);
-    const data = useFormData(form);
+    const {form} = useZodForm(schema);
+    //const {form, getData} = useZodForm(schema);
+    //const data = useFormData(form);
 
-    useEffect(() => {
-        console.log(data.name.first, data.name.middle, data.name.last);
-    }, [data.name]);
+    // useEffect(() => {
+        // console.log(data.name.first, data.name.middle, data.name.last);
+    // }, [data.name]);
 
     return (
         <>
-            <NameForm form={form} />
+            {/*<NameForm form={form} />*/}
             <form.age.Input>
-                {(value, onChange) => {
+                {({value, onChange}) => {
                     return (
                         <input
                             type={'number'}
                             value={value}
-                            onChange={(ev) => onChange(ev.target.value)}
+                            onChange={(ev) => onChange(value = parseInt(ev.target.value))}
                         />
                     );
                 }}
