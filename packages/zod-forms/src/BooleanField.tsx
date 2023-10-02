@@ -1,3 +1,4 @@
+import React from 'react';
 import {ReactElement, useState} from 'react';
 
 export interface BooleanFieldPropsType {
@@ -7,13 +8,14 @@ export interface BooleanFieldPropsType {
     }) => ReactElement;
 }
 
-const BooleanField: React.FC<BooleanFieldPropsType> = ({children}) => {
+const BooleanField: React.FC<BooleanFieldPropsType> = ({children: Children}) => {
     const [value, setValue] = useState<boolean>(false);
     const handleChange = () => {
         setValue(!value);
     };
-    
-    return children({value, onChange: handleChange});
+
+    return <Children value={value} onChange={handleChange}/>;
+
 };
 
 export default BooleanField;

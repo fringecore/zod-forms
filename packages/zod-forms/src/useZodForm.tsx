@@ -204,7 +204,7 @@ const createDefaultObject = <T extends {[key: string]: FieldSchema}>(
         if (form.hasOwnProperty(field)) {
             const fieldSchema = form[field];
 
-            //console.log(fieldSchema);
+            console.log(fieldSchema.Input);
 
             if (fieldSchema.Input) {
                 const fieldFunction = `${fieldSchema.Input}`;
