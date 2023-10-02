@@ -12,6 +12,7 @@ const BooleanField: React.FC<BooleanFieldPropsType> = ({children}) => {
     const handleChange = () => {
         setValue(!value);
     };
+    
     return children({value, onChange: handleChange});
 };
 

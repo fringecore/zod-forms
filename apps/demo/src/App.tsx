@@ -1,6 +1,6 @@
 import z from 'zod';
-import {useZodForm} from 'zod-forms';
-//import {useEffect} from 'react';
+import {useFormData, useZodForm} from 'zod-forms';
+import {useEffect} from 'react';
 
 const schema = z.object({
     name: z.object({
@@ -58,11 +58,13 @@ const schema = z.object({
 function MainForm() {
     const {form} = useZodForm(schema);
     //const {form, getData} = useZodForm(schema);
-    //const data = useFormData(form);
+    const data = useFormData(form);
 
-    // useEffect(() => {
-    // console.log(data.name.first, data.name.mid linuxlite   main  ~  zod-forms 
-    // }, [data.name]);
+    console.log(data)
+
+    useEffect(() => {
+        console.log(data.name.first, data.name.middle, data.name.last)
+    }, [data.name]);
 
     return (
         <>
