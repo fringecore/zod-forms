@@ -10,8 +10,8 @@ const schema = z.object({
     }),
     address: z.string(),
     age: z.number().min(18).max(150),
-    favoriteColor: z.enum(['red', 'blue', 'green']),
-    favoriteFoods: z.array(z.string()),
+    // favoriteColor: z.enum(['red', 'blue', 'green']),
+    // favoriteFoods: z.array(z.string()),
     isAwesome: z.boolean(),
 });
 

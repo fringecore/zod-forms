@@ -9,10 +9,12 @@ import {
     ZodDiscriminatedUnion,
     ZodRawShape,
     ZodBoolean,
+    z,
+    ZodAny,
 } from 'zod';
-import StringField, { StringFieldPropsType } from './StringField';
-import NumberField, { NumberFieldPropsType } from './NumberField';
-import BooleanField, { BooleanFieldPropsType } from './BooleanField';
+import StringField, {StringFieldPropsType} from './StringField';
+import NumberField, {NumberFieldPropsType} from './NumberField';
+import BooleanField, {BooleanFieldPropsType} from './BooleanField';
 
 export interface ArrayFieldPropsType {
     children: (props: {
@@ -103,6 +105,23 @@ const fieldPropsProxy: Record<string, any> = new Proxy(
     },
 );
 
+const fieldDefaults: Record<string, any> = new Proxy(
+    {},
+    {
+        get: (target, key) => {
+            if (key === 'ZodString') {
+                return ""
+            } else if (key === 'ZodNumber') {
+                return 0
+            } else if (key === 'ZodBoolean') {
+                return false
+            }
+
+            return null;
+        },
+    },
+);
+
 /*const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
     schema: SCHEMA_TYPE,
 ): {
@@ -155,6 +174,57 @@ const fieldPropsProxy: Record<string, any> = new Proxy(
     };
 };*/
 
+type FieldSchema = ZodNumber | ZodString | ZodBoolean | ZodObject<any> | ZodArray<ZodAny>;
+
+type DefaultObject<T> = {
+  [key in keyof T]: T[key] extends ZodNumber ? number : 
+                   T[key] extends ZodString ? string :
+                   T[key] extends ZodBoolean ? boolean :
+                   T[key] extends ZodObject<any> ? DefaultObject<T[key]['shape']> :
+                   T[key] extends ZodArray<any> ? any[] :
+                   any;
+};
+
+const createDefaultObject = <T extends { [key: string]: FieldSchema }>(schema: z.ZodObject<T>): DefaultObject<T> => {
+  const defaultObject: any = {};
+
+  for (const field in schema.shape) {
+    if (schema.shape.hasOwnProperty(field)) {
+      const fieldSchema = schema.shape[field];
+
+      if (fieldSchema instanceof ZodString) {
+        defaultObject[field] = "Default String";
+      } else if (fieldSchema instanceof ZodNumber) {
+        if ((fieldSchema._def as any)?.rules?.length > 0) {
+          const constraints = (fieldSchema._def as any)?.rules;
+
+          for (const rule of constraints) {
+            if (rule.type === "refinement") {
+              if (rule.refinementType === "min") {
+                defaultObject[field] = rule.params.limit;
+              } else if (rule.refinementType === "max") {
+                defaultObject[field] = rule.params.limit;
+              }
+            }
+          }
+        } else {
+          defaultObject[field] = 0;
+        }
+      } else if (fieldSchema instanceof ZodBoolean) {
+        defaultObject[field] = false;
+      } else if (fieldSchema instanceof ZodObject) {
+        defaultObject[field] = createDefaultObject(fieldSchema);
+      } else if (fieldSchema instanceof ZodArray) {
+        defaultObject[field] = [];
+      } else {
+        defaultObject[field] = null;
+      }
+    }
+  }
+
+  return defaultObject as DefaultObject<T>;
+};
+
 const memoCache = new WeakMap<ZodObject<any>, any>();
 
 const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
@@ -198,6 +268,9 @@ export const useZodForm = <SCHEMA_TYPE extends ZodObject<any>>(
 ): {
     form: FormFieldsType<SCHEMA_TYPE>;
 } => {
+    const defaultObject = createDefaultObject(schema);
+    console.log(defaultObject);
+    
     return {
         form: createFormStructure(schema).form,
     };
