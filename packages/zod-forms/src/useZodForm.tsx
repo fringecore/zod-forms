@@ -66,16 +66,22 @@ export type FormEmittersType<SCHEMA_TYPE extends ZodObject<any>> = {
         : never;
 };
 
-export function StringInput({
-    emitters,
+export function StringInput<SCHEMA_TYPE extends ZodObject<any>>({
+    context,
     leafPath,
-    data,
     component: Component,
-}: any) {
+}: {
+    context: ContextType<SCHEMA_TYPE>;
+    leafPath: string[];
+    component: StringFieldPropsType['children'];
+}) {
     const [, rerender] = useReducer((val) => val + 1, 0);
 
     useEffect(() => {
-        const emitter: Emitter | undefined = get(emitters, leafPath) as Emitter;
+        const emitter: Emitter | undefined = get(
+            context.emitters,
+            leafPath,
+        ) as Emitter;
         emitter?.addListener(rerender);
 
         return () => {
@@ -83,14 +89,17 @@ export function StringInput({
         };
     }, []);
 
-    const value: string = (get(data, leafPath) as string | undefined) ?? '';
+    const value: string =
+        (get(context.data, leafPath) as string | undefined) ?? '';
 
     const onChange = useCallback((value: string) => {
-        set(data, leafPath, value, {mutate: true});
+        set(context.data, leafPath, value, {mutate: true});
 
-        emitters[EmitterSymbol].emit();
+        context.emitters[EmitterSymbol]?.emit();
 
-        const leafEmitter = get(emitters, leafPath) as Emitter | undefined;
+        const leafEmitter = get(context.emitters, leafPath) as
+            | Emitter
+            | undefined;
         leafEmitter?.emit();
     }, []);
 
@@ -125,16 +134,15 @@ export function formObject<SCHEMA_TYPE extends ZodObject<any>>(
                         Input: ({
                             children: component,
                         }: {
-                            children: StringFieldPropsType;
+                            children: StringFieldPropsType['children'];
                         }) => {
                             const stableComponent = useRef(component).current;
 
                             return (
                                 <StringInput
-                                    component={stableComponent}
-                                    emitters={context.emitters}
+                                    context={context}
                                     leafPath={leafPath}
-                                    data={context.data}
+                                    component={stableComponent}
                                 />
                             );
                         },
