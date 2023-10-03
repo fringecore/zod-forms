@@ -1,5 +1,4 @@
 import React, {
-    ReactElement,
     useEffect,
     useReducer,
     useRef,
@@ -16,9 +15,7 @@ import {
     ZodBoolean,
     z,
 } from 'zod';
-import StringField, {StringFieldPropsType} from './StringField';
-import NumberField, {NumberFieldPropsType} from './NumberField';
-import BooleanField, {BooleanFieldPropsType} from './BooleanField';
+import { BooleanFieldPropsType, NumberFieldPropsType, StringFieldPropsType } from './AllFieldTypes';
 
 export interface ArrayFieldPropsType {
     children: (props: {
