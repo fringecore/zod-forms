@@ -1,8 +1,5 @@
 import React, {useCallback, useEffect, useReducer, useRef} from 'react';
-import {z, ZodBoolean, ZodNumber, ZodObject, ZodRawShape, ZodString} from 'zod';
-import {StringFieldPropsType} from './StringField';
-import {NumberFieldPropsType} from './NumberField';
-import {BooleanFieldPropsType} from './BooleanField';
+import {z, ZodBoolean, ZodNumber, ZodObject, ZodString} from 'zod';
 import {createEmitter, Emitter} from './emitter';
 import {
     DataSymbol,
@@ -13,6 +10,11 @@ import {
     EmitterSymbolType,
 } from './symbols';
 import {get, set} from 'wild-wild-path';
+import {
+    BooleanFieldPropsType,
+    NumberFieldPropsType,
+    StringFieldPropsType,
+} from './AllFieldTypes';
 
 export interface TerminateFieldType<INPUT_PROPS> {
     Input: React.FC<INPUT_PROPS>;
