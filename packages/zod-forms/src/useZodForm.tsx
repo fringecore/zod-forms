@@ -175,7 +175,7 @@ export function formNode<
     }
 }
 
-export function formTree<SCHEMA_TYPE extends ZodObject<any>>(
+export function formRoot<SCHEMA_TYPE extends ZodObject<any>>(
     context: ContextType<SCHEMA_TYPE>,
     schema: SCHEMA_TYPE,
     path: string[],
@@ -188,7 +188,7 @@ export function formTree<SCHEMA_TYPE extends ZodObject<any>>(
                 } else if (key === EmittersSymbol) {
                     return context.emitters;
                 } else {
-                    return null;
+                    throw new Error('symbol not recognized.');
                 }
             }
 
@@ -219,7 +219,7 @@ export const useZodForm = <SCHEMA_TYPE extends ZodObject<any>>(
     }, [context]);
 
     return useRef({
-        form: formTree(context, schema, []),
+        form: formRoot(context, schema, []),
     }).current;
 };
 
