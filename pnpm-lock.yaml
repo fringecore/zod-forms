@@ -32,6 +32,9 @@ importers:
       tailwindcss:
         specifier: 3.3.3
         version: 3.3.3
+      wild-wild-path:
+        specifier: ^4.0.0
+        version: 4.0.0
       zod:
         specifier: 3.22.2
         version: 3.22.2
@@ -75,6 +78,9 @@ importers:
       react:
         specifier: '>=13'
         version: 18.2.0
+      wild-wild-path:
+        specifier: ^4.0.0
+        version: 4.0.0
       zod:
         specifier: ^3.22.2
         version: 3.22.2
@@ -1425,6 +1431,11 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /is-plain-obj@4.1.0:
+    resolution: {integrity: sha512-+Pgi+vMuUNkJyExiMBt5IlFoMyKnr5zhJ4Uspz58WOhBF5QoIZkFyNHIbBAtHwzVAgk5RtndVNsDRN61/mmDqg==}
+    engines: {node: '>=12'}
+    dev: false
+
   /isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
     dev: true
@@ -2118,6 +2129,19 @@ packages:
     dependencies:
       isexe: 2.0.0
     dev: true
+
+  /wild-wild-parser@4.0.0:
+    resolution: {integrity: sha512-budu64hUDKRzh5yDe8T9Rxgwvz1JCWbea/3u7/D6uNPqE00J+hm0kNZhpFfCGgKkUhDKL47Jci9oPBHRKbO+oA==}
+    engines: {node: '>=16.17.0'}
+    dev: false
+
+  /wild-wild-path@4.0.0:
+    resolution: {integrity: sha512-uXJ5cRet416kOLSAoUzHQx4B3kFL39o1pkw3/KjKf2c1UWi094JIEfC2Gh6NWYb3RWlEZuD3p6S0j0VUYZsAbw==}
+    engines: {node: '>=16.17.0'}
+    dependencies:
+      is-plain-obj: 4.1.0
+      wild-wild-parser: 4.0.0
+    dev: false
 
   /wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}

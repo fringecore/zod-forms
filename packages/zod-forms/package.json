@@ -29,12 +29,15 @@
     ],
     "license": "MIT",
     "devDependencies": {
-        "typescript": "5.2.2",
         "@types/react": ">=18.2.21",
-        "turbo": "1.10.13"
+        "turbo": "1.10.13",
+        "typescript": "5.2.2"
     },
     "peerDependencies": {
         "react": ">=13",
         "zod": "^3.22.2"
+    },
+    "dependencies": {
+        "wild-wild-path": "^4.0.0"
     }
 }
