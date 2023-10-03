@@ -21,6 +21,7 @@ import {
     NumberFieldPropsType,
     StringFieldPropsType,
 } from './AllFieldTypes';
+import {DeepPartial} from './types/DeepPartial';
 
 export interface TerminateFieldType<INPUT_PROPS> {
     Input: React.FC<INPUT_PROPS>;
@@ -28,7 +29,7 @@ export interface TerminateFieldType<INPUT_PROPS> {
 
 export interface RootSymbolFields<SCHEMA_TYPE extends ZodObject<any>> {
     [EmittersSymbol]: FormEmittersType<SCHEMA_TYPE>;
-    [DataSymbol]: Partial<z.infer<SCHEMA_TYPE>>;
+    [DataSymbol]: DeepPartial<z.infer<SCHEMA_TYPE>>;
 }
 
 export type ZodFormFieldType<SCHEMA extends ZodType> =
@@ -200,7 +201,7 @@ export function formRoot<SCHEMA_TYPE extends ZodObject<any>>(
 export type ContextType<SCHEMA_TYPE extends ZodObject<any>> = {
     elementCache: FormFieldsCacheType<SCHEMA_TYPE>;
     emitters: FormEmittersType<SCHEMA_TYPE>;
-    data: Partial<z.infer<SCHEMA_TYPE>>;
+    data: DeepPartial<z.infer<SCHEMA_TYPE>>;
 };
 
 export const useZodForm = <SCHEMA_TYPE extends ZodObject<any>>(
@@ -211,7 +212,7 @@ export const useZodForm = <SCHEMA_TYPE extends ZodObject<any>>(
     const context = useRef<ContextType<SCHEMA_TYPE>>({
         elementCache: {},
         emitters: {},
-        data: {},
+        data: {} as any,
     }).current;
 
     useEffect(() => {
@@ -225,7 +226,7 @@ export const useZodForm = <SCHEMA_TYPE extends ZodObject<any>>(
 
 export const useFormData = <SCHEMA extends ZodObject<any>>(
     form: RootFieldsType<SCHEMA>,
-): Partial<z.infer<SCHEMA>> => {
+): DeepPartial<z.infer<SCHEMA>> => {
     const [, rerender] = useReducer((val) => val + 1, 0);
 
     useEffect(() => {
