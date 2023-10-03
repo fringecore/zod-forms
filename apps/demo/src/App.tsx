@@ -19,7 +19,7 @@ function MainForm() {
             <pre>
                 <code>{JSON.stringify(data, null, 2)}</code>
             </pre>
-            <form.name.first.Input>
+            <form.name.middle.Input>
                 {({value, onChange}) => {
                     return (
                         <input
@@ -32,7 +32,7 @@ function MainForm() {
                         />
                     );
                 }}
-            </form.name.first.Input>
+            </form.name.middle.Input>
 
             <form.name.first.Input>
                 {({value, onChange}) => {

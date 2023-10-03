@@ -1,11 +1,17 @@
 import React, {useCallback, useEffect, useReducer, useRef} from 'react';
-import {z, ZodBoolean, ZodNumber, ZodObject, ZodString} from 'zod';
+import {
+    z,
+    ZodBoolean,
+    ZodNumber,
+    ZodObject,
+    ZodOptional,
+    ZodString,
+    ZodType,
+} from 'zod';
 import {createEmitter, Emitter} from './emitter';
 import {
     DataSymbol,
-    DataSymbolType,
     EmittersSymbol,
-    EmittersSymbolType,
     EmitterSymbol,
     EmitterSymbolType,
 } from './symbols';
@@ -20,27 +26,30 @@ export interface TerminateFieldType<INPUT_PROPS> {
     Input: React.FC<INPUT_PROPS>;
 }
 
-export type FormFieldsType<SCHEMA_TYPE extends ZodObject<any>> = {
-    [key in
-        | keyof SCHEMA_TYPE['shape']
-        | EmittersSymbolType
-        | DataSymbolType]: key extends EmittersSymbolType
-        ? FormEmittersType<SCHEMA_TYPE>
-        : key extends DataSymbolType
-        ? Partial<z.infer<SCHEMA_TYPE>>
-        : //
-        ///
-        // STRING KEYS
-        SCHEMA_TYPE['shape'][key] extends ZodNumber
-        ? TerminateFieldType<NumberFieldPropsType>
-        : SCHEMA_TYPE['shape'][key] extends ZodString
+export interface RootSymbolFields<SCHEMA_TYPE extends ZodObject<any>> {
+    [EmittersSymbol]: FormEmittersType<SCHEMA_TYPE>;
+    [DataSymbol]: Partial<z.infer<SCHEMA_TYPE>>;
+}
+
+export type ZodFormFieldType<SCHEMA extends ZodType> =
+    SCHEMA extends ZodOptional<infer InnerShape>
+        ? ZodFormFieldType<InnerShape>
+        : SCHEMA extends ZodObject<any>
+        ? {
+              [key in keyof SCHEMA['shape']]: ZodFormFieldType<
+                  SCHEMA['shape'][key]
+              >;
+          }
+        : SCHEMA extends ZodString
         ? TerminateFieldType<StringFieldPropsType>
-        : SCHEMA_TYPE['shape'][key] extends ZodBoolean
+        : SCHEMA extends ZodNumber
+        ? TerminateFieldType<NumberFieldPropsType>
+        : SCHEMA extends ZodBoolean
         ? TerminateFieldType<BooleanFieldPropsType>
-        : SCHEMA_TYPE['shape'][key] extends ZodObject<any>
-        ? FormFieldsType<SCHEMA_TYPE['shape'][key]>
         : never;
-};
+
+export type RootFieldsType<SCHEMA_TYPE extends ZodObject<any>> =
+    RootSymbolFields<SCHEMA_TYPE> & ZodFormFieldType<SCHEMA_TYPE>;
 
 export type FormFieldsCacheType<SCHEMA_TYPE extends ZodObject<any>> = {
     [key in keyof SCHEMA_TYPE['shape']]?: SCHEMA_TYPE['shape'][key] extends never
@@ -106,12 +115,72 @@ export function StringInput<SCHEMA_TYPE extends ZodObject<any>>({
     return <Component value={value} onChange={onChange} />;
 }
 
-export function formObject<SCHEMA_TYPE extends ZodObject<any>>(
+export function formNode<
+    SCHEMA_TYPE extends ZodObject<any>,
+    SCHEMA extends ZodType,
+>(
+    context: ContextType<SCHEMA_TYPE>,
+    schema: SCHEMA,
+    path: string[],
+): ZodFormFieldType<SCHEMA> {
+    if (schema instanceof ZodOptional) {
+        return formNode(
+            context,
+            schema.unwrap(),
+            path,
+        ) as ZodFormFieldType<SCHEMA>;
+    } else if (schema instanceof ZodString) {
+        const leafPath = path;
+        const leaf = get(context.elementCache, leafPath);
+
+        if (!leaf) {
+            const components = {
+                Input: ({
+                    children: component,
+                }: {
+                    children: StringFieldPropsType['children'];
+                }) => {
+                    const stableComponent = useRef(component).current;
+
+                    return (
+                        <StringInput
+                            context={context}
+                            leafPath={leafPath}
+                            component={stableComponent}
+                        />
+                    );
+                },
+            };
+
+            set(context.elementCache, leafPath, components, {
+                mutate: true,
+            });
+
+            set(context.emitters, leafPath, createEmitter(), {
+                mutate: true,
+            });
+
+            return components as ZodFormFieldType<SCHEMA>;
+        } else {
+            return leaf as ZodFormFieldType<SCHEMA>;
+        }
+    } else if (schema instanceof ZodObject) {
+        return new Proxy({} as unknown as ZodFormFieldType<SCHEMA>, {
+            get(target, key: string) {
+                return formNode(context, schema.shape[key], [...path, key]);
+            },
+        });
+    } else {
+        throw new Error('not implemented yet');
+    }
+}
+
+export function formTree<SCHEMA_TYPE extends ZodObject<any>>(
     context: ContextType<SCHEMA_TYPE>,
     schema: SCHEMA_TYPE,
     path: string[],
-): FormFieldsType<SCHEMA_TYPE> {
-    return new Proxy({} as unknown as FormFieldsType<SCHEMA_TYPE>, {
+): RootFieldsType<SCHEMA_TYPE> {
+    return new Proxy({} as unknown as RootFieldsType<SCHEMA_TYPE>, {
         get(target, key) {
             if (typeof key === 'symbol') {
                 if (key === DataSymbol) {
@@ -123,44 +192,7 @@ export function formObject<SCHEMA_TYPE extends ZodObject<any>>(
                 }
             }
 
-            if (schema.shape[key] instanceof ZodObject) {
-                return formObject(context, schema.shape[key], [...path, key]);
-            } else if (schema.shape[key] instanceof ZodString) {
-                const leafPath = [...path, key];
-                const leaf = get(context.elementCache, leafPath);
-
-                if (!leaf) {
-                    const components = {
-                        Input: ({
-                            children: component,
-                        }: {
-                            children: StringFieldPropsType['children'];
-                        }) => {
-                            const stableComponent = useRef(component).current;
-
-                            return (
-                                <StringInput
-                                    context={context}
-                                    leafPath={leafPath}
-                                    component={stableComponent}
-                                />
-                            );
-                        },
-                    };
-
-                    set(context.elementCache, leafPath, components, {
-                        mutate: true,
-                    });
-
-                    set(context.emitters, leafPath, createEmitter(), {
-                        mutate: true,
-                    });
-
-                    return components;
-                } else {
-                    return leaf;
-                }
-            }
+            return formNode(context, schema.shape[key], [...path, key]);
         },
     });
 }
@@ -174,7 +206,7 @@ export type ContextType<SCHEMA_TYPE extends ZodObject<any>> = {
 export const useZodForm = <SCHEMA_TYPE extends ZodObject<any>>(
     schema: SCHEMA_TYPE,
 ): {
-    form: FormFieldsType<SCHEMA_TYPE>;
+    form: RootFieldsType<SCHEMA_TYPE>;
 } => {
     const context = useRef<ContextType<SCHEMA_TYPE>>({
         elementCache: {},
@@ -187,12 +219,12 @@ export const useZodForm = <SCHEMA_TYPE extends ZodObject<any>>(
     }, [context]);
 
     return useRef({
-        form: formObject(context, schema, []),
+        form: formTree(context, schema, []),
     }).current;
 };
 
 export const useFormData = <SCHEMA extends ZodObject<any>>(
-    form: FormFieldsType<SCHEMA>,
+    form: RootFieldsType<SCHEMA>,
 ): Partial<z.infer<SCHEMA>> => {
     const [, rerender] = useReducer((val) => val + 1, 0);
 
