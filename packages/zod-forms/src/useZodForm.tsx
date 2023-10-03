@@ -1,80 +1,10 @@
 import React, {useCallback, useEffect, useReducer, useRef} from 'react';
-import {
-    z,
-    ZodBoolean,
-    ZodNumber,
-    ZodObject,
-    ZodOptional,
-    ZodString,
-    ZodType,
-} from 'zod';
-import {createEmitter, Emitter} from './emitter';
-import {
-    DataSymbol,
-    EmittersSymbol,
-    EmitterSymbol,
-    EmitterSymbolType,
-} from './symbols';
+import {ZodObject, ZodOptional, ZodString, ZodType} from 'zod';
+import {createEmitter, Emitter} from './utils/emitter';
+import {DataSymbol, EmittersSymbol, EmitterSymbol} from './symbols';
 import {get, set} from 'wild-wild-path';
-import {
-    BooleanFieldPropsType,
-    NumberFieldPropsType,
-    StringFieldPropsType,
-} from './AllFieldTypes';
-import {DeepPartial} from './types/DeepPartial';
-
-export interface TerminateFieldType<INPUT_PROPS> {
-    Input: React.FC<INPUT_PROPS>;
-}
-
-export interface RootSymbolFields<SCHEMA_TYPE extends ZodObject<any>> {
-    [EmittersSymbol]: FormEmittersType<SCHEMA_TYPE>;
-    [DataSymbol]: DeepPartial<z.infer<SCHEMA_TYPE>>;
-}
-
-export type ZodFormFieldType<SCHEMA extends ZodType> =
-    SCHEMA extends ZodOptional<infer InnerShape>
-        ? ZodFormFieldType<InnerShape>
-        : SCHEMA extends ZodObject<any>
-        ? {
-              [key in keyof SCHEMA['shape']]: ZodFormFieldType<
-                  SCHEMA['shape'][key]
-              >;
-          }
-        : SCHEMA extends ZodString
-        ? TerminateFieldType<StringFieldPropsType>
-        : SCHEMA extends ZodNumber
-        ? TerminateFieldType<NumberFieldPropsType>
-        : SCHEMA extends ZodBoolean
-        ? TerminateFieldType<BooleanFieldPropsType>
-        : never;
-
-export type RootFieldsType<SCHEMA_TYPE extends ZodObject<any>> =
-    RootSymbolFields<SCHEMA_TYPE> & ZodFormFieldType<SCHEMA_TYPE>;
-
-export type FormFieldsCacheType<SCHEMA_TYPE extends ZodObject<any>> = {
-    [key in keyof SCHEMA_TYPE['shape']]?: SCHEMA_TYPE['shape'][key] extends never
-        ? never
-        : SCHEMA_TYPE['shape'][key] extends ZodNumber
-        ? TerminateFieldType<NumberFieldPropsType>
-        : SCHEMA_TYPE['shape'][key] extends ZodString
-        ? TerminateFieldType<StringFieldPropsType>
-        : SCHEMA_TYPE['shape'][key] extends ZodBoolean
-        ? TerminateFieldType<BooleanFieldPropsType>
-        : SCHEMA_TYPE['shape'][key] extends ZodObject<any>
-        ? FormFieldsCacheType<SCHEMA_TYPE['shape'][key]>
-        : never;
-};
-
-export type FormEmittersType<SCHEMA_TYPE extends ZodObject<any>> = {
-    [key in
-        | keyof SCHEMA_TYPE['shape']
-        | EmitterSymbolType]?: key extends EmitterSymbolType
-        ? Emitter
-        : SCHEMA_TYPE['shape'][key] extends ZodObject<any>
-        ? FormEmittersType<SCHEMA_TYPE['shape'][key]>
-        : never;
-};
+import {StringFieldPropsType} from './types/AllFieldTypes';
+import {ContextType, RootFieldsType, ZodFormFieldType} from './types/CoreTypes';
 
 export function StringInput<SCHEMA_TYPE extends ZodObject<any>>({
     context,
@@ -198,12 +128,6 @@ export function formRoot<SCHEMA_TYPE extends ZodObject<any>>(
     });
 }
 
-export type ContextType<SCHEMA_TYPE extends ZodObject<any>> = {
-    elementCache: FormFieldsCacheType<SCHEMA_TYPE>;
-    emitters: FormEmittersType<SCHEMA_TYPE>;
-    data: DeepPartial<z.infer<SCHEMA_TYPE>>;
-};
-
 export const useZodForm = <SCHEMA_TYPE extends ZodObject<any>>(
     schema: SCHEMA_TYPE,
 ): {
@@ -222,24 +146,4 @@ export const useZodForm = <SCHEMA_TYPE extends ZodObject<any>>(
     return useRef({
         form: formRoot(context, schema, []),
     }).current;
-};
-
-export const useFormData = <SCHEMA extends ZodObject<any>>(
-    form: RootFieldsType<SCHEMA>,
-): DeepPartial<z.infer<SCHEMA>> => {
-    const [, rerender] = useReducer((val) => val + 1, 0);
-
-    useEffect(() => {
-        const emitter = form[EmittersSymbol][EmitterSymbol];
-
-        emitter?.addListener(() => {
-            rerender();
-        });
-
-        return () => {
-            emitter?.removeListener(rerender);
-        };
-    }, [rerender]);
-
-    return form[DataSymbol];
 };
