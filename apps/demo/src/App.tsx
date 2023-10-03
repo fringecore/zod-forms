@@ -1,6 +1,6 @@
 import z from 'zod';
 import {useFormData, useZodForm} from 'zod-forms';
-import {useEffect} from 'react';
+import {useState} from 'react';
 
 const schema = z.object({
     name: z.object({
@@ -9,10 +9,6 @@ const schema = z.object({
         last: z.string(),
     }),
     address: z.string(),
-    age: z.number().min(18).max(150),
-    // favoriteColor: z.enum(['red', 'blue', 'green']),
-    // favoriteFoods: z.array(z.string()),
-    isAwesome: z.boolean(),
 });
 
 /*function NameForm({form}: {form: Form<z.infer<typeof schema>>}) {
@@ -55,39 +51,46 @@ const schema = z.object({
     );
 }*/
 
+const FirstNameInput = ({
+    value,
+    onChange,
+}: {
+    value: string;
+    onChange: (value: string) => void;
+}) => {
+    return (
+        <input
+            className={'border-2 m-4'}
+            type={'text'}
+            value={value}
+            onChange={(ev) => {
+                onChange(ev.target.value);
+            }}
+        />
+    );
+};
+
 function MainForm() {
     const {form} = useZodForm(schema);
-    //const {form, getData} = useZodForm(schema);
     const data = useFormData(form);
 
-    console.log(data)
-
-    useEffect(() => {
-        console.log(data.name.first, data.name.middle, data.name.last)
-    }, [data.name]);
+    const [s, setS] = useState(0);
 
     return (
         <>
-            {/*<NameForm form={form} />*/}
-            <form.age.Input>
-                {({value, onChange}) => {
-                    console.log(value);
+            <pre>{JSON.stringify(data, null, 2)}</pre>
+            <button onClick={() => setS((s) => s + 1)}>Click {s}</button>
+            <form.name.last.Input>
+                {({
+                    value,
+                    onChange,
+                }: {
+                    value: string;
+                    onChange: (value: string) => void;
+                }) => {
                     return (
                         <input
-                            type={'number'}
-                            value={value}
-                            onChange={(ev) =>
-                                onChange(parseInt(ev.target.value))
-                            }
-                        />
-                    );
-                }}
-            </form.age.Input>
-            <form.address.Input>
-                {({value, onChange}) => {
-                    console.log(value);
-                    return (
-                        <input
+                            className={'border-2 m-4'}
                             type={'text'}
                             value={value}
                             onChange={(ev) => {
@@ -96,21 +99,38 @@ function MainForm() {
                         />
                     );
                 }}
-            </form.address.Input>
-            <form.name.first.Input>
-                {({value, onChange}) => {
-                    console.log(value);
-                    return (
-                        <input
-                            type={'text'}
-                            value={value}
-                            onChange={(ev) => {
-                                onChange(ev.target.value);
-                            }}
-                        />
-                    );
-                }}
-            </form.name.first.Input>
+            </form.name.last.Input>
+            <form.name.first.Input children={FirstNameInput} />
+
+            {/*<form.name.first.Input>*/}
+            {/*    {({value, onChange}) => {*/}
+            {/*        return (*/}
+            {/*            <input*/}
+            {/*                className={'border-2 m-4 border-red-500'}*/}
+            {/*                type={'text'}*/}
+            {/*                value={value}*/}
+            {/*                onChange={(ev) => {*/}
+            {/*                    onChange(ev.target.value);*/}
+            {/*                }}*/}
+            {/*            />*/}
+            {/*        );*/}
+            {/*    }}*/}
+            {/*</form.name.first.Input>*/}
+
+            {/*<form.address.Input>*/}
+            {/*    {({value, onChange}) => {*/}
+            {/*        return (*/}
+            {/*            <input*/}
+            {/*                className={'border-2 m-4'}*/}
+            {/*                type={'text'}*/}
+            {/*                value={value}*/}
+            {/*                onChange={(ev) => {*/}
+            {/*                    onChange(ev.target.value);*/}
+            {/*                }}*/}
+            {/*            />*/}
+            {/*        );*/}
+            {/*    }}*/}
+            {/*</form.address.Input>*/}
         </>
     );
 }

@@ -1,4 +1,10 @@
-import React, {ReactElement} from 'react';
+import React, {
+    ReactElement,
+    useEffect,
+    useReducer,
+    useRef,
+    useState,
+} from 'react';
 import {
     ZodObject,
     ZodType,
@@ -229,7 +235,10 @@ const createDefaultObject = <T extends {[key: string]: FieldSchema}>(
                 } else if (fieldFunction.includes('BooleanField')) {
                     defaultObject[field] = false;
                 }
-            } else if (!(fieldSchema.Input) && Object.keys(fieldSchema).length !== 0) {
+            } else if (
+                !fieldSchema.Input &&
+                Object.keys(fieldSchema).length !== 0
+            ) {
                 defaultObject[field] = createDefaultObject(fieldSchema);
             } else {
                 defaultObject[field] = null;
@@ -278,17 +287,215 @@ const createFormStructure = <SCHEMA_TYPE extends ZodObject<any>>(
     return result;
 };
 
+export function createEmitter() {
+    const listeners = new Set<() => void>();
+
+    return {
+        addListener: (listener: () => void) => {
+            listeners.add(listener);
+        },
+        removeListener: (listener: () => void) => {
+            listeners.delete(listener);
+        },
+        emit: () => {
+            listeners.forEach((listener) => {
+                listener();
+            });
+        },
+    };
+}
+
+export type Emitter = ReturnType<typeof createEmitter>;
+
+export const EmitterSymbol = Symbol('EMITTER');
+export const DataSymbol = Symbol('DATA');
+
+export function StringInput({
+    emitters,
+    leafPath,
+    data,
+    component: Component,
+}: any) {
+    const [, rerender] = useReducer((val) => val + 1, 0);
+
+    useEffect(() => {
+        console.log('called');
+        const listenerPairs: [Emitter, () => void][] = [];
+
+        if (!emitters[EmitterSymbol]) {
+            emitters[EmitterSymbol] = createEmitter();
+        }
+
+        emitters[EmitterSymbol].addListener(rerender);
+
+        listenerPairs.push([emitters[EmitterSymbol], rerender]);
+
+        let lastNode = emitters;
+
+        for (const key of leafPath) {
+            if (!lastNode[key]) {
+                lastNode[key] = {};
+            }
+
+            if (!lastNode[key][EmitterSymbol]) {
+                lastNode[key][EmitterSymbol] = createEmitter();
+            }
+
+            lastNode[key][EmitterSymbol].addListener(rerender);
+
+            listenerPairs.push([lastNode[key][EmitterSymbol], rerender]);
+
+            lastNode = lastNode[key];
+        }
+
+        return () => {
+            for (const [emitter, listener] of listenerPairs) {
+                emitter.removeListener(listener);
+            }
+        };
+    }, []);
+
+    const value = (() => {
+        let subData: any = data;
+
+        for (const key of leafPath) {
+            const targetSubdata = subData[key];
+
+            if (targetSubdata === undefined) {
+                break;
+            } else if (typeof targetSubdata === 'string') {
+                return targetSubdata;
+            } else {
+                subData = targetSubdata;
+            }
+        }
+
+        return '';
+    })();
+
+    const onChange = (value: string) => {
+        // WRITE DATA TO DATA OBJECT
+        let lastObject: any = data;
+
+        for (const key of leafPath.slice(0, -1)) {
+            if (!lastObject[key]) {
+                lastObject[key] = {};
+            }
+
+            lastObject = lastObject[key];
+        }
+
+        lastObject[leafPath[leafPath.length - 1]] = value;
+
+        // TRIGGER ALL EMITTERS IN PARENT NODES (optionally create emitters)
+        emitters[EmitterSymbol].emit();
+
+        let lastNode = emitters;
+
+        for (const key of leafPath) {
+            lastNode[key][EmitterSymbol].emit();
+            lastNode = lastNode[key];
+        }
+    };
+
+    return <Component value={value} onChange={onChange} />;
+}
+
+export function formObject<SCHEMA extends ZodObject<any>>(
+    elementCache: any,
+    emitters: any,
+    data: Partial<z.infer<SCHEMA>>,
+    schema: SCHEMA,
+    path: string[],
+): FormFieldsType<SCHEMA> {
+    return new Proxy(
+        {},
+        {
+            get(
+                target,
+                key: string | typeof DataSymbol | typeof EmitterSymbol,
+            ) {
+                if (key === DataSymbol) {
+                    return data;
+                } else if (key === EmitterSymbol) {
+                    return emitters;
+                }
+
+                if (schema.shape[key] instanceof ZodObject) {
+                    return formObject(
+                        elementCache,
+                        emitters,
+                        data,
+                        schema.shape[key],
+                        [...path, key],
+                    );
+                } else if (schema.shape[key] instanceof ZodString) {
+                    const leafPath = [...path, key];
+
+                    let lastNode = elementCache;
+
+                    for (const key of leafPath) {
+                        if (!lastNode[key]) {
+                            lastNode[key] = {};
+                        }
+
+                        lastNode = lastNode[key];
+                    }
+
+                    if (!lastNode.Input) {
+                        lastNode.Input = ({children: component}: any) => {
+                            const stableComponent = useRef(component);
+                            const stableLeafPath = useRef(leafPath);
+
+                            return (
+                                <StringInput
+                                    component={stableComponent.current}
+                                    emitters={emitters}
+                                    leafPath={stableLeafPath.current}
+                                    data={data}
+                                />
+                            );
+                        };
+                    }
+
+                    return {
+                        Input: lastNode.Input,
+                    };
+                }
+            },
+        },
+    ) as any;
+}
+
 export const useZodForm = <SCHEMA_TYPE extends ZodObject<any>>(
     schema: SCHEMA_TYPE,
 ): {
     form: FormFieldsType<SCHEMA_TYPE>;
 } => {
+    const [elementCache] = useState({});
+    const [emitters] = useState({});
+    const [data] = useState({});
+
     return {
-        form: createFormStructure(schema).form,
+        // form: createFormStructure(schema).form,
+        form: formObject(elementCache, emitters, data, schema, []),
     };
 };
 
-export const useFormData = (form: any) => {
-    const defaultObject = createDefaultObject(form);
-    return defaultObject;
+export const useFormData = <SCHEMA extends ZodObject<any>>(
+    form: FormFieldsType<SCHEMA>,
+): Partial<z.infer<SCHEMA>> => {
+    const [, rerender] = useReducer((val) => val + 1, 0);
+
+    const emitters: any = form[EmitterSymbol as any];
+
+    useEffect(() => {
+        emitters[EmitterSymbol].addListener(rerender);
+
+        return () => {
+            emitters[EmitterSymbol].removeListener(rerender);
+        };
+    }, []);
+
+    return form[DataSymbol as any];
 };
