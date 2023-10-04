@@ -16,7 +16,7 @@ export interface NumberFieldPropsType {
 
 export interface BooleanFieldPropsType {
     children: (props: {
-        value: boolean;
+        value?: boolean;
         onChange: (value: boolean) => void;
     }) => ReactElement;
 }

@@ -9,6 +9,7 @@ const schema = z.object({
     }),
     address: z.string(),
     age: z.number(),
+    isStudent: z.boolean(),
 });
 
 function MainForm() {
@@ -63,6 +64,19 @@ function MainForm() {
                     );
                 }}
             </form.age.Input>
+            <form.isStudent.Input>
+                {({value, onChange}) => {
+                    return (
+                        <input
+                            className={'border-2 m-4'}
+                            type="checkbox"
+                            onChange={() => {
+                                onChange(!value);
+                            }}
+                        />
+                    );
+                }}
+            </form.isStudent.Input>
         </>
     );
 }
