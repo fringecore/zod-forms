@@ -9,6 +9,9 @@ const schema = z.object({
     }),
     address: z.string(),
     tomato: z.enum(['yes', 'no'] as const),
+    age: z.number(),
+    isStudent: z.boolean(),
+    favoriteColor: z.enum(['red', 'blue', 'green']),
 });
 
 function MainForm() {
@@ -57,6 +60,33 @@ function MainForm() {
                     );
                 }}
             </form.name.first.Input>
+            <form.age.Input>
+                {({value, onChange}) => {
+                    return (
+                        <input
+                            className={'border-2 m-4'}
+                            type={'number'}
+                            value={value}
+                            onChange={(ev) => {
+                                onChange(parseInt(ev.target.value));
+                            }}
+                        />
+                    );
+                }}
+            </form.age.Input>
+            <form.isStudent.Input>
+                {({value, onChange}) => {
+                    return (
+                        <input
+                            className={'border-2 m-4'}
+                            type="checkbox"
+                            onChange={() => {
+                                onChange(!value);
+                            }}
+                        />
+                    );
+                }}
+            </form.isStudent.Input>
         </>
     );
 }

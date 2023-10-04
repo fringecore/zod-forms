@@ -1,12 +1,5 @@
 import {ReactElement} from 'react';
 
-export interface EnumFieldPropsType<VALUES extends [string, ...string[]]> {
-    children: (props: {
-        value: VALUES[number];
-        onChange: (value: VALUES[number]) => void;
-    }) => ReactElement;
-}
-
 export interface StringFieldPropsType {
     children: (props: {
         value: string;
@@ -23,7 +16,15 @@ export interface NumberFieldPropsType {
 
 export interface BooleanFieldPropsType {
     children: (props: {
-        value: boolean;
+        value?: boolean;
         onChange: (value: boolean) => void;
+    }) => ReactElement;
+}
+
+export interface EnumFieldPropsType<VALUES extends [string, ...string[]]> {
+    children: (props: {
+        options: VALUES;
+        value: VALUES[number];
+        onChange: (value: VALUES[number]) => void;
     }) => ReactElement;
 }
