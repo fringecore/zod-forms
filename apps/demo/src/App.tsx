@@ -10,6 +10,7 @@ const schema = z.object({
     address: z.string(),
     age: z.number(),
     isStudent: z.boolean(),
+    favoriteColor: z.enum(['red', 'blue', 'green']),
 });
 
 function MainForm() {

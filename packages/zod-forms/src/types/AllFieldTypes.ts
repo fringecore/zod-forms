@@ -20,3 +20,11 @@ export interface BooleanFieldPropsType {
         onChange: (value: boolean) => void;
     }) => ReactElement;
 }
+
+export interface EnumFieldPropsType<T extends string> {
+    options: T[];
+    children: (props: {
+        value: T;
+        onChange: (value: T) => void;
+    }) => ReactElement;
+}
