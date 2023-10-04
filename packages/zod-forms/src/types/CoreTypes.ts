@@ -41,7 +41,7 @@ export type ZodFormFieldType<SCHEMA_TYPE extends ZodType> =
         : SCHEMA_TYPE extends ZodString
         ? TerminateFieldType<StringInputPropsType>
         : SCHEMA_TYPE extends ZodEnum<[string, ...string[]]>
-        ? TerminateFieldType<EnumInputPropsType<SCHEMA_TYPE['options']>>
+        ? TerminateFieldType<EnumInputPropsType<string>>
         : SCHEMA_TYPE extends ZodNumber
         ? TerminateFieldType<NumberInputPropsType>
         : SCHEMA_TYPE extends ZodBoolean
@@ -59,7 +59,7 @@ export type FormFieldsCacheType<SCHEMA_TYPE extends ZodObject<any>> = {
         : SCHEMA_TYPE['shape'][key] extends ZodString
         ? TerminateFieldType<StringInputPropsType>
         : SCHEMA_TYPE extends ZodEnum<[string, ...string[]]>
-        ? TerminateFieldType<EnumInputPropsType<SCHEMA_TYPE['options']>>
+        ? TerminateFieldType<EnumInputPropsType<string>>
         : SCHEMA_TYPE['shape'][key] extends ZodBoolean
         ? TerminateFieldType<BooleanInputPropsType>
         : SCHEMA_TYPE['shape'][key] extends ZodObject<any>
