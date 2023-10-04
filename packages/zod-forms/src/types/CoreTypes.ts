@@ -12,10 +12,10 @@ import {
 import {DataSymbol, EmittersSymbol, EmitterSymbolType} from '../symbols';
 import {DeepPartial} from './DeepPartial';
 import {
-    BooleanFieldPropsType,
-    EnumFieldPropsType,
-    NumberFieldPropsType,
-    StringFieldPropsType,
+    BooleanInputPropsType,
+    EnumInputPropsType,
+    NumberInputPropsType,
+    StringInputPropsType,
 } from './AllFieldTypes';
 
 import {Emitter} from '../utils/emitter';
@@ -39,13 +39,13 @@ export type ZodFormFieldType<SCHEMA_TYPE extends ZodType> =
               >;
           }
         : SCHEMA_TYPE extends ZodString
-        ? TerminateFieldType<StringFieldPropsType>
+        ? TerminateFieldType<StringInputPropsType>
         : SCHEMA_TYPE extends ZodEnum<[string, ...string[]]>
-        ? TerminateFieldType<EnumFieldPropsType<SCHEMA_TYPE['options']>>
+        ? TerminateFieldType<EnumInputPropsType<SCHEMA_TYPE['options']>>
         : SCHEMA_TYPE extends ZodNumber
-        ? TerminateFieldType<NumberFieldPropsType>
+        ? TerminateFieldType<NumberInputPropsType>
         : SCHEMA_TYPE extends ZodBoolean
-        ? TerminateFieldType<BooleanFieldPropsType>
+        ? TerminateFieldType<BooleanInputPropsType>
         : never;
 
 export type RootFieldsType<SCHEMA_TYPE extends ZodObject<any>> =
@@ -55,13 +55,13 @@ export type FormFieldsCacheType<SCHEMA_TYPE extends ZodObject<any>> = {
     [key in keyof SCHEMA_TYPE['shape']]?: SCHEMA_TYPE['shape'][key] extends never
         ? never
         : SCHEMA_TYPE['shape'][key] extends ZodNumber
-        ? TerminateFieldType<NumberFieldPropsType>
+        ? TerminateFieldType<NumberInputPropsType>
         : SCHEMA_TYPE['shape'][key] extends ZodString
-        ? TerminateFieldType<StringFieldPropsType>
+        ? TerminateFieldType<StringInputPropsType>
         : SCHEMA_TYPE extends ZodEnum<[string, ...string[]]>
-        ? TerminateFieldType<EnumFieldPropsType<SCHEMA_TYPE['options']>>
+        ? TerminateFieldType<EnumInputPropsType<SCHEMA_TYPE['options']>>
         : SCHEMA_TYPE['shape'][key] extends ZodBoolean
-        ? TerminateFieldType<BooleanFieldPropsType>
+        ? TerminateFieldType<BooleanInputPropsType>
         : SCHEMA_TYPE['shape'][key] extends ZodObject<any>
         ? FormFieldsCacheType<SCHEMA_TYPE['shape'][key]>
         : never;

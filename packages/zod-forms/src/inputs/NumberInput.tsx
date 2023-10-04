@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useReducer} from 'react';
 import {ZodObject} from 'zod';
-import {NumberFieldPropsType} from '../types/AllFieldTypes';
+import {NumberInputPropsType} from '../types/AllFieldTypes';
 import {Emitter} from '../utils/emitter';
 import {ContextType} from '../types/CoreTypes';
 import {get, set} from 'wild-wild-path';
@@ -14,7 +14,7 @@ export function NumberInput<SCHEMA_TYPE extends ZodObject<any>>({
 }: {
     context: ContextType<SCHEMA_TYPE>;
     leafPath: string[];
-    component: NumberFieldPropsType['children'];
+    component: NumberInputPropsType['children'];
 }) {
     const [, rerender] = useReducer((val) => val + 1, 0);
 

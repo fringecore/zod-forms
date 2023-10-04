@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useReducer } from "react";
-import { ZodObject } from "zod";
-import { StringFieldPropsType } from "../types/AllFieldTypes";
-import { Emitter } from "../utils/emitter";
+import {useCallback, useEffect, useReducer} from 'react';
+import {ZodObject} from 'zod';
+import {StringInputPropsType} from '../types/AllFieldTypes';
+import {Emitter} from '../utils/emitter';
 import {ContextType} from '../types/CoreTypes';
-import { get, set } from "wild-wild-path";
-import { EmitterSymbol } from "../symbols";
-import React from "react";
+import {get, set} from 'wild-wild-path';
+import {EmitterSymbol} from '../symbols';
+import React from 'react';
 
 export function StringInput<SCHEMA_TYPE extends ZodObject<any>>({
     context,
@@ -14,7 +14,7 @@ export function StringInput<SCHEMA_TYPE extends ZodObject<any>>({
 }: {
     context: ContextType<SCHEMA_TYPE>;
     leafPath: string[];
-    component: StringFieldPropsType['children'];
+    component: StringInputPropsType['children'];
 }) {
     const [, rerender] = useReducer((val) => val + 1, 0);
 

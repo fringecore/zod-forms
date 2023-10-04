@@ -11,9 +11,9 @@ import {createEmitter} from './utils/emitter';
 import {DataSymbol, EmittersSymbol, EmitterSymbol} from './symbols';
 import {get, set} from 'wild-wild-path';
 import {
-    BooleanFieldPropsType,
-    NumberFieldPropsType,
-    StringFieldPropsType,
+    BooleanInputPropsType,
+    NumberInputPropsType,
+    StringInputPropsType,
 } from './types/AllFieldTypes';
 import {ContextType, RootFieldsType, ZodFormFieldType} from './types/CoreTypes';
 import {StringInput} from './inputs/StringInput';
@@ -40,7 +40,7 @@ export function formNode<
 
         if (!leaf) {
             const components = {
-                Input: (props: StringFieldPropsType) => {
+                Input: (props: StringInputPropsType) => {
                     const stableComponent = useRef(
                         'children' in props ? props.children : props.component,
                     ).current;
@@ -73,7 +73,7 @@ export function formNode<
 
         if (!leaf) {
             const components = {
-                Input: (props: NumberFieldPropsType) => {
+                Input: (props: NumberInputPropsType) => {
                     const stableComponent = useRef(
                         'children' in props ? props.children : props.component,
                     ).current;
@@ -106,7 +106,7 @@ export function formNode<
 
         if (!leaf) {
             const components = {
-                Input: (props: BooleanFieldPropsType) => {
+                Input: (props: BooleanInputPropsType) => {
                     const stableComponent = useRef(
                         'children' in props ? props.children : props.component,
                     ).current;
