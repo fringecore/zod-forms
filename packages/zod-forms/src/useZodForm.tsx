@@ -1,50 +1,11 @@
-import React, {useCallback, useEffect, useReducer, useRef} from 'react';
+import React, { useEffect, useRef} from 'react';
 import {ZodObject, ZodOptional, ZodString, ZodType} from 'zod';
-import {createEmitter, Emitter} from './utils/emitter';
+import {createEmitter} from './utils/emitter';
 import {DataSymbol, EmittersSymbol, EmitterSymbol} from './symbols';
 import {get, set} from 'wild-wild-path';
 import {StringFieldPropsType} from './types/AllFieldTypes';
 import {ContextType, RootFieldsType, ZodFormFieldType} from './types/CoreTypes';
-
-export function StringInput<SCHEMA_TYPE extends ZodObject<any>>({
-    context,
-    leafPath,
-    component: Component,
-}: {
-    context: ContextType<SCHEMA_TYPE>;
-    leafPath: string[];
-    component: StringFieldPropsType['children'];
-}) {
-    const [, rerender] = useReducer((val) => val + 1, 0);
-
-    useEffect(() => {
-        const emitter: Emitter | undefined = get(
-            context.emitters,
-            leafPath,
-        ) as Emitter;
-        emitter?.addListener(rerender);
-
-        return () => {
-            emitter?.removeListener(rerender);
-        };
-    }, []);
-
-    const value: string =
-        (get(context.data, leafPath) as string | undefined) ?? '';
-
-    const onChange = useCallback((value: string) => {
-        set(context.data, leafPath, value, {mutate: true});
-
-        context.emitters[EmitterSymbol]?.emit();
-
-        const leafEmitter = get(context.emitters, leafPath) as
-            | Emitter
-            | undefined;
-        leafEmitter?.emit();
-    }, []);
-
-    return <Component value={value} onChange={onChange} />;
-}
+import { StringInput } from './inputs/StringInput';
 
 export function formNode<
     SCHEMA_TYPE extends ZodObject<any>,
