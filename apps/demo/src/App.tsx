@@ -1,5 +1,6 @@
 import z from 'zod';
 import {useFormData, useZodForm} from 'zod-forms';
+import {useSetFormData} from 'zod-forms';
 
 const schema = z.object({
     name: z.object({
@@ -26,6 +27,7 @@ function MainForm() {
     });
 
     const data = useFormData(form);
+    const setFormData = useSetFormData(form);
 
     return (
         <>
@@ -33,65 +35,91 @@ function MainForm() {
                 <code>{JSON.stringify(data, null, 2)}</code>
             </pre>
 
-            <form.name.middle.Input
-                component={({value, onChange}) => {
-                    return (
-                        <input
-                            className={'border-2 m-4'}
-                            type={'text'}
-                            value={value}
-                            onChange={(ev) => {
-                                onChange(ev.target.value);
-                            }}
-                        />
-                    );
-                }}
-            />
+            <div>
+                <button
+                    onClick={() =>
+                        setFormData({
+                            name: {
+                                first: 'Jane',
+                                middle: 'Pattrick',
+                            },
+                        })
+                    }>
+                    CHANGE
+                </button>
+            </div>
 
-            <form.name.first.Input>
-                {({value, onChange}) => {
-                    return (
-                        <input
-                            className={'border-2 m-4'}
-                            type={'text'}
-                            value={value}
-                            onChange={(ev) => {
-                                onChange(ev.target.value);
-                            }}
-                        />
-                    );
-                }}
-            </form.name.first.Input>
+            <div>
+                MIDDLE
+                <form.name.middle.Input
+                    component={({value, onChange}) => {
+                        return (
+                            <input
+                                className={'border-2 m-4'}
+                                type={'text'}
+                                value={value}
+                                onChange={(ev) => {
+                                    onChange(ev.target.value);
+                                }}
+                            />
+                        );
+                    }}
+                />
+            </div>
 
-            <form.age.Input>
-                {({value, onChange}) => {
-                    return (
-                        <input
-                            className={'border-2 m-4'}
-                            type={'number'}
-                            value={value}
-                            onChange={(ev) => {
-                                onChange(parseInt(ev.target.value));
-                            }}
-                        />
-                    );
-                }}
-            </form.age.Input>
+            <div>
+                FIRST
+                <form.name.first.Input>
+                    {({value, onChange}) => {
+                        return (
+                            <input
+                                className={'border-2 m-4'}
+                                type={'text'}
+                                value={value}
+                                onChange={(ev) => {
+                                    onChange(ev.target.value);
+                                }}
+                            />
+                        );
+                    }}
+                </form.name.first.Input>
+            </div>
 
-            <form.isStudent.Input>
-                {({value, onChange}) => {
-                    return (
-                        <input
-                            className={'border-2 m-4'}
-                            type="checkbox"
-                            checked={value}
-                            onChange={(ev) => {
-                                onChange(ev.target.checked);
-                            }}
-                        />
-                    );
-                }}
-            </form.isStudent.Input>
+            <div>
+                AGE
+                <form.age.Input>
+                    {({value, onChange}) => {
+                        return (
+                            <input
+                                className={'border-2 m-4'}
+                                type={'number'}
+                                value={value}
+                                onChange={(ev) => {
+                                    onChange(parseInt(ev.target.value));
+                                }}
+                            />
+                        );
+                    }}
+                </form.age.Input>
+            </div>
+
+            <div>
+                IS STUDENT
+                <form.isStudent.Input>
+                    {({value, onChange}) => {
+                        return (
+                            <input
+                                className={'border-2 m-4'}
+                                type="checkbox"
+                                checked={value}
+                                onChange={(ev) => {
+                                    onChange(ev.target.checked);
+                                }}
+                            />
+                        );
+                    }}
+                </form.isStudent.Input>
+            </div>
         </>
     );
 }

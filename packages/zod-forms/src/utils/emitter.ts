@@ -1,19 +1,25 @@
-export function createEmitter() {
-    const listeners = new Set<() => void>();
+export class Emitter {
+    private listeners = new Set<() => void>();
 
-    return {
-        addListener: (listener: () => void) => {
-            listeners.add(listener);
-        },
-        removeListener: (listener: () => void) => {
-            listeners.delete(listener);
-        },
-        emit: () => {
-            listeners.forEach((listener) => {
-                listener();
-            });
-        },
-    };
+    get listenerCount() {
+        return this.listeners.size;
+    }
+
+    addListener(listener: () => void) {
+        this.listeners.add(listener);
+    }
+
+    removeListener(listener: () => void) {
+        this.listeners.delete(listener);
+    }
+
+    emit() {
+        this.listeners.forEach((listener) => {
+            listener();
+        });
+    }
 }
 
-export type Emitter = ReturnType<typeof createEmitter>;
+export function createEmitter() {
+    return new Emitter();
+}
