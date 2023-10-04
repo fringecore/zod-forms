@@ -12,18 +12,44 @@ import {createEmitter} from './utils/emitter';
 import {DataSymbol, EmittersSymbol, EmitterSymbol} from './symbols';
 import {get, set} from 'wild-wild-path';
 import {StringInputPropsType} from './types/AllFieldTypes';
-import {ContextType, RootFieldsType, ZodFormFieldType} from './types/CoreTypes';
+import {
+    ContextType,
+    FormEmittersType,
+    RootFieldsType,
+    ZodFormFieldType,
+} from './types/CoreTypes';
 import {StringInput} from './inputs/StringInput';
 import {NumberInput} from './inputs/NumberInput';
 import {BooleanInput} from './inputs/BooleanInput';
 import {DeepPartial} from './types/DeepPartial';
+
+export function createEmitterChain<SCHEMA_TYPE extends ZodObject<any>>(
+    emitters: FormEmittersType<SCHEMA_TYPE>,
+    path: [string, ...string[]],
+) {
+    let node: FormEmittersType<any> = emitters as any;
+
+    for (const key of path.slice(1, -1)) {
+        if (!(key in node)) {
+            node[key] = {};
+        }
+
+        if (key in node && !(EmitterSymbol in node[key]!)) {
+            (node[key] as any)[EmitterSymbol] = createEmitter();
+        }
+
+        node = node[key]!;
+    }
+
+    (node as any)[path[path.length - 1]] = createEmitter();
+}
 
 export function getMemoizedLeaf<
     SCHEMA_TYPE extends ZodObject<any>,
     SCHEMA extends ZodType,
 >(
     context: ContextType<SCHEMA_TYPE>,
-    path: string[],
+    path: [string, ...string[]],
     InputComponent: (props: {
         context: ContextType<SCHEMA_TYPE>;
         leafPath: string[];
@@ -53,9 +79,7 @@ export function getMemoizedLeaf<
             mutate: true,
         });
 
-        set(context.emitters, path, createEmitter(), {
-            mutate: true,
-        });
+        createEmitterChain(context.emitters, path);
 
         return components as ZodFormFieldType<SCHEMA>;
     } else {
@@ -69,7 +93,7 @@ export function formNode<
 >(
     context: ContextType<SCHEMA_TYPE>,
     schema: SCHEMA,
-    path: string[],
+    path: [string, ...string[]],
 ): ZodFormFieldType<SCHEMA> {
     if (schema instanceof ZodOptional) {
         return formNode(
@@ -111,7 +135,7 @@ export function formRoot<SCHEMA_TYPE extends ZodObject<any>>(
                 }
             }
 
-            return formNode(context, schema.shape[key], [...path, key]);
+            return formNode(context, schema.shape[key], [...path, key] as any);
         },
     });
 }
