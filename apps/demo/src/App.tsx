@@ -126,7 +126,7 @@ function MainForm() {
                     <select
                         value={value}
                         onChange={(e) =>
-                            onChange(e.target.value as 'red' | 'blue' | 'green')
+                            onChange(e.target.value)
                         }>
                         {schema.shape.favoriteColor.options.map((option) => (
                             <option key={option} value={option}>

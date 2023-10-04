@@ -30,7 +30,7 @@ export function EnumInput<SCHEMA_TYPE extends ZodObject<any>, T extends string>(
             context.emitters,
             context.data,
             leafPath,
-        ) as T) ?? '';
+        ) as T) ?? options[0];
 
     const onChange = useOnChange<T, SCHEMA_TYPE>(
         context.emitters,
