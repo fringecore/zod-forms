@@ -8,6 +8,7 @@ const schema = z.object({
         last: z.string(),
     }),
     address: z.string(),
+    age: z.number(),
 });
 
 function MainForm() {
@@ -48,6 +49,20 @@ function MainForm() {
                     );
                 }}
             </form.name.first.Input>
+            <form.age.Input>
+                {({value, onChange}) => {
+                    return (
+                        <input
+                            className={'border-2 m-4'}
+                            type={'number'}
+                            value={value}
+                            onChange={(ev) => {
+                                onChange(parseInt(ev.target.value));
+                            }}
+                        />
+                    );
+                }}
+            </form.age.Input>
         </>
     );
 }

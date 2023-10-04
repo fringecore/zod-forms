@@ -1,20 +1,20 @@
-import { useCallback, useEffect, useReducer } from "react";
-import { ZodObject } from "zod";
-import { StringFieldPropsType } from "../types/AllFieldTypes";
-import { Emitter } from "../utils/emitter";
+import {useCallback, useEffect, useReducer} from 'react';
+import {ZodObject} from 'zod';
+import {NumberFieldPropsType} from '../types/AllFieldTypes';
+import {Emitter} from '../utils/emitter';
 import {ContextType} from '../types/CoreTypes';
-import { get, set } from "wild-wild-path";
-import { EmitterSymbol } from "../symbols";
-import React from "react";
+import {get, set} from 'wild-wild-path';
+import {EmitterSymbol} from '../symbols';
+import React from 'react';
 
-export function StringInput<SCHEMA_TYPE extends ZodObject<any>>({
+export function NumberInput<SCHEMA_TYPE extends ZodObject<any>>({
     context,
     leafPath,
     component: Component,
 }: {
     context: ContextType<SCHEMA_TYPE>;
     leafPath: string[];
-    component: StringFieldPropsType['children'];
+    component: NumberFieldPropsType['children'];
 }) {
     const [, rerender] = useReducer((val) => val + 1, 0);
 
@@ -30,10 +30,10 @@ export function StringInput<SCHEMA_TYPE extends ZodObject<any>>({
         };
     }, []);
 
-    const value: string =
-        (get(context.data, leafPath) as string | undefined) ?? '';
+    const value: number =
+        (get(context.data, leafPath) as number | undefined) ?? 0;
 
-    const onChange = useCallback((value: string) => {
+    const onChange = useCallback((value: number) => {
         set(context.data, leafPath, value, {mutate: true});
 
         context.emitters[EmitterSymbol]?.emit();

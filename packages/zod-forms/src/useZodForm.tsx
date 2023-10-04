@@ -1,11 +1,15 @@
-import React, { useEffect, useRef} from 'react';
-import {ZodObject, ZodOptional, ZodString, ZodType} from 'zod';
+import React, {useEffect, useRef} from 'react';
+import {ZodNumber, ZodObject, ZodOptional, ZodString, ZodType} from 'zod';
 import {createEmitter} from './utils/emitter';
 import {DataSymbol, EmittersSymbol, EmitterSymbol} from './symbols';
 import {get, set} from 'wild-wild-path';
-import {StringFieldPropsType} from './types/AllFieldTypes';
+import {
+    NumberFieldPropsType,
+    StringFieldPropsType,
+} from './types/AllFieldTypes';
 import {ContextType, RootFieldsType, ZodFormFieldType} from './types/CoreTypes';
-import { StringInput } from './inputs/StringInput';
+import {StringInput} from './inputs/StringInput';
+import {NumberInput} from './inputs/NumberInput';
 
 export function formNode<
     SCHEMA_TYPE extends ZodObject<any>,
@@ -52,6 +56,36 @@ export function formNode<
                 mutate: true,
             });
 
+            return components as ZodFormFieldType<SCHEMA>;
+        } else {
+            return leaf as ZodFormFieldType<SCHEMA>;
+        }
+    } else if (schema instanceof ZodNumber) {
+        const leafPath = path;
+        const leaf = get(context.elementCache, leafPath);
+        if (!leaf) {
+            const components = {
+                Input: ({
+                    children: component,
+                }: {
+                    children: NumberFieldPropsType['children'];
+                }) => {
+                    const stableComponent = useRef(component).current;
+                    return (
+                        <NumberInput
+                            context={context}
+                            leafPath={leafPath}
+                            component={stableComponent}
+                        />
+                    );
+                },
+            };
+            set(context.elementCache, leafPath, components, {
+                mutate: true,
+            });
+            set(context.emitters, leafPath, createEmitter(), {
+                mutate: true,
+            });
             return components as ZodFormFieldType<SCHEMA>;
         } else {
             return leaf as ZodFormFieldType<SCHEMA>;
