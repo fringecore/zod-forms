@@ -31,7 +31,7 @@ export function createEmitterChain<SCHEMA_TYPE extends ZodObject<any>>(
 ) {
     let node: FormEmittersType<any> = emitters as any;
 
-    for (const key of path.slice(1, -1)) {
+    for (const key of path.slice(0, -1)) {
         if (!(key in node)) {
             node[key] = {};
         }
