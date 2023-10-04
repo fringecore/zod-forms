@@ -40,12 +40,10 @@ export function formNode<
 
         if (!leaf) {
             const components = {
-                Input: ({
-                    children: component,
-                }: {
-                    children: StringFieldPropsType['children'];
-                }) => {
-                    const stableComponent = useRef(component).current;
+                Input: (props: StringFieldPropsType) => {
+                    const stableComponent = useRef(
+                        'children' in props ? props.children : props.component,
+                    ).current;
 
                     return (
                         <StringInput
@@ -72,14 +70,14 @@ export function formNode<
     } else if (schema instanceof ZodNumber) {
         const leafPath = path;
         const leaf = get(context.elementCache, leafPath);
+
         if (!leaf) {
             const components = {
-                Input: ({
-                    children: component,
-                }: {
-                    children: NumberFieldPropsType['children'];
-                }) => {
-                    const stableComponent = useRef(component).current;
+                Input: (props: NumberFieldPropsType) => {
+                    const stableComponent = useRef(
+                        'children' in props ? props.children : props.component,
+                    ).current;
+
                     return (
                         <NumberInput
                             context={context}
@@ -89,12 +87,15 @@ export function formNode<
                     );
                 },
             };
+
             set(context.elementCache, leafPath, components, {
                 mutate: true,
             });
+
             set(context.emitters, leafPath, createEmitter(), {
                 mutate: true,
             });
+
             return components as ZodFormFieldType<SCHEMA>;
         } else {
             return leaf as ZodFormFieldType<SCHEMA>;
@@ -102,14 +103,14 @@ export function formNode<
     } else if (schema instanceof ZodBoolean) {
         const leafPath = path;
         const leaf = get(context.elementCache, leafPath);
+
         if (!leaf) {
             const components = {
-                Input: ({
-                    children: component,
-                }: {
-                    children: BooleanFieldPropsType['children'];
-                }) => {
-                    const stableComponent = useRef(component).current;
+                Input: (props: BooleanFieldPropsType) => {
+                    const stableComponent = useRef(
+                        'children' in props ? props.children : props.component,
+                    ).current;
+
                     return (
                         <BooleanInput
                             context={context}
@@ -119,12 +120,15 @@ export function formNode<
                     );
                 },
             };
+
             set(context.elementCache, leafPath, components, {
                 mutate: true,
             });
+
             set(context.emitters, leafPath, createEmitter(), {
                 mutate: true,
             });
+
             return components as ZodFormFieldType<SCHEMA>;
         } else {
             return leaf as ZodFormFieldType<SCHEMA>;

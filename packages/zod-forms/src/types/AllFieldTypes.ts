@@ -1,30 +1,55 @@
 import {ReactElement} from 'react';
 
-export interface StringFieldPropsType {
-    children: (props: {
-        value: string;
-        onChange: (value: string) => void;
-    }) => ReactElement;
-}
+export type StringFieldComponentType = (props: {
+    value: string;
+    onChange: (value: string) => void;
+}) => ReactElement;
 
-export interface NumberFieldPropsType {
-    children: (props: {
-        value: number;
-        onChange: (value: number) => void;
-    }) => ReactElement;
-}
+export type StringFieldPropsType =
+    | {
+          children: StringFieldComponentType;
+      }
+    | {
+          component: StringFieldComponentType;
+      };
 
-export interface BooleanFieldPropsType {
-    children: (props: {
-        value?: boolean;
-        onChange: (value: boolean) => void;
-    }) => ReactElement;
-}
+export type NumberFieldComponentType = (props: {
+    value: number;
+    onChange: (value: number) => void;
+}) => ReactElement;
 
-export interface EnumFieldPropsType<VALUES extends [string, ...string[]]> {
-    children: (props: {
+export type NumberFieldPropsType =
+    | {
+          children: NumberFieldComponentType;
+      }
+    | {
+          component: NumberFieldComponentType;
+      };
+
+export type BooleanFieldComponentType = (props: {
+    value?: boolean;
+    onChange: (value: boolean) => void;
+}) => ReactElement;
+
+export type BooleanFieldPropsType =
+    | {
+          children: BooleanFieldComponentType;
+      }
+    | {
+          component: BooleanFieldComponentType;
+      };
+
+export type EnumFieldComponentType<VALUES extends [string, ...string[]]> =
+    (props: {
         options: VALUES;
         value: VALUES[number];
         onChange: (value: VALUES[number]) => void;
     }) => ReactElement;
-}
+
+export type EnumFieldPropsType<VALUES extends [string, ...string[]]> =
+    | {
+          children: EnumFieldComponentType<VALUES>;
+      }
+    | {
+          component: EnumFieldComponentType<VALUES>;
+      };

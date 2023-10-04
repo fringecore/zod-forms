@@ -17,6 +17,7 @@ import {
     NumberFieldPropsType,
     StringFieldPropsType,
 } from './AllFieldTypes';
+
 import {Emitter} from '../utils/emitter';
 
 export interface TerminateFieldType<INPUT_PROPS> {

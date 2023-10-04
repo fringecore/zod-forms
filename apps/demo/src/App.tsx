@@ -23,16 +23,9 @@ function MainForm() {
             <pre>
                 <code>{JSON.stringify(data, null, 2)}</code>
             </pre>
-            <form.tomato.Input>
-                {({value, onChange}) => {
-                    return (
-                        <button onChange={() => onChange('no')}>{value}</button>
-                    );
-                }}
-            </form.tomato.Input>
 
-            <form.name.middle.Input>
-                {({value, onChange}) => {
+            <form.name.middle.Input
+                component={({value, onChange}) => {
                     return (
                         <input
                             className={'border-2 m-4'}
@@ -44,7 +37,7 @@ function MainForm() {
                         />
                     );
                 }}
-            </form.name.middle.Input>
+            />
 
             <form.name.first.Input>
                 {({value, onChange}) => {
