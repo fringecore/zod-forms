@@ -8,6 +8,7 @@ const schema = z.object({
         last: z.string(),
     }),
     address: z.string(),
+    tomato: z.enum(['yes', 'no'] as const),
 });
 
 function MainForm() {
@@ -19,6 +20,14 @@ function MainForm() {
             <pre>
                 <code>{JSON.stringify(data, null, 2)}</code>
             </pre>
+            <form.tomato.Input>
+                {({value, onChange}) => {
+                    return (
+                        <button onChange={() => onChange('no')}>{value}</button>
+                    );
+                }}
+            </form.tomato.Input>
+
             <form.name.middle.Input>
                 {({value, onChange}) => {
                     return (

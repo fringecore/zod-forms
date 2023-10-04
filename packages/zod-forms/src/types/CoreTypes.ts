@@ -2,6 +2,7 @@ import React from 'react';
 import {
     z,
     ZodBoolean,
+    ZodEnum,
     ZodNumber,
     ZodObject,
     ZodOptional,
@@ -12,6 +13,7 @@ import {DataSymbol, EmittersSymbol, EmitterSymbolType} from '../symbols';
 import {DeepPartial} from './DeepPartial';
 import {
     BooleanFieldPropsType,
+    EnumFieldPropsType,
     NumberFieldPropsType,
     StringFieldPropsType,
 } from './AllFieldTypes';
@@ -26,20 +28,22 @@ export interface RootSymbolFields<SCHEMA_TYPE extends ZodObject<any>> {
     [DataSymbol]: DeepPartial<z.infer<SCHEMA_TYPE>>;
 }
 
-export type ZodFormFieldType<SCHEMA extends ZodType> =
-    SCHEMA extends ZodOptional<infer InnerShape>
+export type ZodFormFieldType<SCHEMA_TYPE extends ZodType> =
+    SCHEMA_TYPE extends ZodOptional<infer InnerShape>
         ? ZodFormFieldType<InnerShape>
-        : SCHEMA extends ZodObject<any>
+        : SCHEMA_TYPE extends ZodObject<any>
         ? {
-              [key in keyof SCHEMA['shape']]: ZodFormFieldType<
-                  SCHEMA['shape'][key]
+              [key in keyof SCHEMA_TYPE['shape']]: ZodFormFieldType<
+                  SCHEMA_TYPE['shape'][key]
               >;
           }
-        : SCHEMA extends ZodString
+        : SCHEMA_TYPE extends ZodString
         ? TerminateFieldType<StringFieldPropsType>
-        : SCHEMA extends ZodNumber
+        : SCHEMA_TYPE extends ZodEnum<[string, ...string[]]>
+        ? TerminateFieldType<EnumFieldPropsType<SCHEMA_TYPE['options']>>
+        : SCHEMA_TYPE extends ZodNumber
         ? TerminateFieldType<NumberFieldPropsType>
-        : SCHEMA extends ZodBoolean
+        : SCHEMA_TYPE extends ZodBoolean
         ? TerminateFieldType<BooleanFieldPropsType>
         : never;
 
@@ -53,6 +57,8 @@ export type FormFieldsCacheType<SCHEMA_TYPE extends ZodObject<any>> = {
         ? TerminateFieldType<NumberFieldPropsType>
         : SCHEMA_TYPE['shape'][key] extends ZodString
         ? TerminateFieldType<StringFieldPropsType>
+        : SCHEMA_TYPE extends ZodEnum<[string, ...string[]]>
+        ? TerminateFieldType<EnumFieldPropsType<SCHEMA_TYPE['options']>>
         : SCHEMA_TYPE['shape'][key] extends ZodBoolean
         ? TerminateFieldType<BooleanFieldPropsType>
         : SCHEMA_TYPE['shape'][key] extends ZodObject<any>

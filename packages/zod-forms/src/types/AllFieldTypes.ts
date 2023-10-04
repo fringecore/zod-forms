@@ -1,4 +1,11 @@
-import { ReactElement } from "react";
+import {ReactElement} from 'react';
+
+export interface EnumFieldPropsType<VALUES extends [string, ...string[]]> {
+    children: (props: {
+        value: VALUES[number];
+        onChange: (value: VALUES[number]) => void;
+    }) => ReactElement;
+}
 
 export interface StringFieldPropsType {
     children: (props: {
