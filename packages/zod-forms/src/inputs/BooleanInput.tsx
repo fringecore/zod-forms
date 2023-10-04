@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useReducer} from 'react';
 import {ZodObject} from 'zod';
-import {BooleanInputPropsType} from '../types/AllFieldTypes';
+import {BooleanFieldComponentType} from '../types/AllFieldTypes';
 import {Emitter} from '../utils/emitter';
 import {ContextType} from '../types/CoreTypes';
 import {get, set} from 'wild-wild-path';
@@ -14,7 +14,7 @@ export function BooleanInput<SCHEMA_TYPE extends ZodObject<any>>({
 }: {
     context: ContextType<SCHEMA_TYPE>;
     leafPath: string[];
-    component: BooleanInputPropsType['children'];
+    component: BooleanFieldComponentType;
 }) {
     const [, rerender] = useReducer((val) => val + 1, 0);
 
