@@ -2,6 +2,7 @@ import React, {ReactElement, useEffect, useRef} from 'react';
 import {
     z,
     ZodBoolean,
+    ZodEnum,
     ZodNumber,
     ZodObject,
     ZodOptional,
@@ -16,6 +17,7 @@ import {ContextType, RootFieldsType, ZodFormFieldType} from './types/CoreTypes';
 import {StringInput} from './inputs/StringInput';
 import {NumberInput} from './inputs/NumberInput';
 import {BooleanInput} from './inputs/BooleanInput';
+import { EnumInput } from './inputs/EnumInput';
 import {DeepPartial} from './types/DeepPartial';
 
 export function getMemoizedLeaf<
@@ -83,7 +85,10 @@ export function formNode<
         return getMemoizedLeaf(context, path, NumberInput);
     } else if (schema instanceof ZodBoolean) {
         return getMemoizedLeaf(context, path, BooleanInput);
-    } else if (schema instanceof ZodObject) {
+    } else if(schema instanceof ZodEnum) {
+        return getMemoizedLeaf(context, path, EnumInput);
+    }
+     else if (schema instanceof ZodObject) {
         return new Proxy({} as unknown as ZodFormFieldType<SCHEMA>, {
             get(target, key: string) {
                 return formNode(context, schema.shape[key], [...path, key]);

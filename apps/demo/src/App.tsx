@@ -120,6 +120,22 @@ function MainForm() {
                     }}
                 </form.isStudent.Input>
             </div>
+
+            <form.favoriteColor.Input>
+                {({value, onChange}) => (
+                    <select
+                        value={value}
+                        onChange={(e) =>
+                            onChange(e.target.value as 'red' | 'blue' | 'green')
+                        }>
+                        {schema.shape.favoriteColor.options.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </select>
+                )}
+            </form.favoriteColor.Input>
         </>
     );
 }

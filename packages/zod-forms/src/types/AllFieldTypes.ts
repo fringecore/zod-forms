@@ -23,15 +23,15 @@ export type BooleanFieldComponentType = (props: {
     onChange: (value: boolean) => void;
 }) => ReactElement;
 
-export type EnumFieldComponentType<VALUES extends [string, ...string[]]> =
+export type EnumFieldComponentType<VALUE extends string> =
     (props: {
-        options: VALUES;
-        value: VALUES[number];
-        onChange: (value: VALUES[number]) => void;
+        options: VALUE[];
+        value: VALUE;
+        onChange: (value: VALUE) => void;
     }) => ReactElement;
 
 export type StringInputPropsType = InputPropsType<StringFieldComponentType>;
 export type NumberInputPropsType = InputPropsType<NumberFieldComponentType>;
 export type BooleanInputPropsType = InputPropsType<BooleanFieldComponentType>;
-export type EnumInputPropsType<VALUES extends [string, ...string[]]> =
-    InputPropsType<EnumFieldComponentType<VALUES>>;
+export type EnumInputPropsType<VALUE extends string> =
+    InputPropsType<EnumFieldComponentType<VALUE>>;
