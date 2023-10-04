@@ -15,7 +15,16 @@ const schema = z.object({
 });
 
 function MainForm() {
-    const {form} = useZodForm(schema);
+    const {form} = useZodForm(schema, {
+        initialData: {
+            name: {
+                first: 'John',
+                last: 'Doe',
+            },
+            isStudent: true,
+        },
+    });
+
     const data = useFormData(form);
 
     return (
@@ -53,6 +62,7 @@ function MainForm() {
                     );
                 }}
             </form.name.first.Input>
+
             <form.age.Input>
                 {({value, onChange}) => {
                     return (
@@ -67,14 +77,16 @@ function MainForm() {
                     );
                 }}
             </form.age.Input>
+
             <form.isStudent.Input>
                 {({value, onChange}) => {
                     return (
                         <input
                             className={'border-2 m-4'}
                             type="checkbox"
-                            onChange={() => {
-                                onChange(!value);
+                            checked={value}
+                            onChange={(ev) => {
+                                onChange(ev.target.checked);
                             }}
                         />
                     );

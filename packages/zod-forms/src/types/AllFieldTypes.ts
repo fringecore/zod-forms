@@ -19,7 +19,7 @@ export type NumberFieldComponentType = (props: {
 }) => ReactElement;
 
 export type BooleanFieldComponentType = (props: {
-    value?: boolean;
+    value: boolean;
     onChange: (value: boolean) => void;
 }) => ReactElement;
 

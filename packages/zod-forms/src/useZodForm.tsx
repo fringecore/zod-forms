@@ -1,5 +1,6 @@
 import React, {ReactElement, useEffect, useRef} from 'react';
 import {
+    z,
     ZodBoolean,
     ZodNumber,
     ZodObject,
@@ -10,21 +11,12 @@ import {
 import {createEmitter} from './utils/emitter';
 import {DataSymbol, EmittersSymbol, EmitterSymbol} from './symbols';
 import {get, set} from 'wild-wild-path';
-import {
-    BooleanInputPropsType,
-    NumberInputPropsType,
-    StringFieldComponentType,
-    StringInputPropsType,
-} from './types/AllFieldTypes';
-import {
-    ContextType,
-    FormFieldsCacheType,
-    RootFieldsType,
-    ZodFormFieldType,
-} from './types/CoreTypes';
+import {StringInputPropsType} from './types/AllFieldTypes';
+import {ContextType, RootFieldsType, ZodFormFieldType} from './types/CoreTypes';
 import {StringInput} from './inputs/StringInput';
 import {NumberInput} from './inputs/NumberInput';
 import {BooleanInput} from './inputs/BooleanInput';
+import {DeepPartial} from './types/DeepPartial';
 
 export function getMemoizedLeaf<
     SCHEMA_TYPE extends ZodObject<any>,
@@ -126,13 +118,21 @@ export function formRoot<SCHEMA_TYPE extends ZodObject<any>>(
 
 export const useZodForm = <SCHEMA_TYPE extends ZodObject<any>>(
     schema: SCHEMA_TYPE,
+    options: {
+        initialData?:
+            | DeepPartial<z.infer<SCHEMA_TYPE>>
+            | (() => DeepPartial<z.infer<SCHEMA_TYPE>>);
+    } = {},
 ): {
     form: RootFieldsType<SCHEMA_TYPE>;
 } => {
     const context = useRef<ContextType<SCHEMA_TYPE>>({
         elementCache: {},
         emitters: {},
-        data: {} as any,
+        data:
+            options?.initialData instanceof Function
+                ? options.initialData()
+                : options?.initialData ?? ({} as any),
     }).current;
 
     useEffect(() => {
