@@ -3,7 +3,7 @@ import {RootFieldsType} from './types/CoreTypes';
 import {DeepPartial} from './types/DeepPartial';
 import {useCallback} from 'react';
 import {DataSymbol, EmittersSymbol, EmitterSymbol} from './symbols';
-import {recursiveEmit} from './utils/recursiveEmit';
+import {recursiveEmit} from './utils/emit-utils';
 
 export const useSetFormData = <SCHEMA extends ZodObject<any>>(
     form: RootFieldsType<SCHEMA>,

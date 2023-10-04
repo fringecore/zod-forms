@@ -11,7 +11,7 @@ export function BooleanInput<SCHEMA_TYPE extends ZodObject<any>>({
     component: Component,
 }: {
     context: ContextType<SCHEMA_TYPE>;
-    leafPath: string[];
+    leafPath: [string, ...string[]];
     component: BooleanFieldComponentType;
 }) {
     const value =

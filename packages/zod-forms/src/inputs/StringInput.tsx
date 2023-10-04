@@ -11,7 +11,7 @@ export function StringInput<SCHEMA_TYPE extends ZodObject<any>>({
     component: Component,
 }: {
     context: ContextType<SCHEMA_TYPE>;
-    leafPath: string[];
+    leafPath: [string, ...string[]];
     component: StringFieldComponentType;
 }) {
     const value =

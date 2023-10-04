@@ -22,7 +22,7 @@ import {
 import {StringInput} from './inputs/StringInput';
 import {NumberInput} from './inputs/NumberInput';
 import {BooleanInput} from './inputs/BooleanInput';
-import { EnumInput } from './inputs/EnumInput';
+import {EnumInput} from './inputs/EnumInput';
 import {DeepPartial} from './types/DeepPartial';
 
 export function createEmitterChain<SCHEMA_TYPE extends ZodObject<any>>(
@@ -54,7 +54,7 @@ export function getMemoizedLeaf<
     path: [string, ...string[]],
     InputComponent: (props: {
         context: ContextType<SCHEMA_TYPE>;
-        leafPath: string[];
+        leafPath: [string, ...string[]];
         component: any;
     }) => ReactElement,
 ) {
@@ -109,10 +109,9 @@ export function formNode<
         return getMemoizedLeaf(context, path, NumberInput);
     } else if (schema instanceof ZodBoolean) {
         return getMemoizedLeaf(context, path, BooleanInput);
-    } else if(schema instanceof ZodEnum) {
+    } else if (schema instanceof ZodEnum) {
         return getMemoizedLeaf(context, path, EnumInput);
-    }
-     else if (schema instanceof ZodObject) {
+    } else if (schema instanceof ZodObject) {
         return new Proxy({} as unknown as ZodFormFieldType<SCHEMA>, {
             get(target, key: string) {
                 return formNode(context, schema.shape[key], [...path, key]);
@@ -162,6 +161,7 @@ export const useZodForm = <SCHEMA_TYPE extends ZodObject<any>>(
             options?.initialData instanceof Function
                 ? options.initialData()
                 : options?.initialData ?? ({} as any),
+        schema: schema,
     }).current;
 
     useEffect(() => {

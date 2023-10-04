@@ -5,23 +5,25 @@ import React from 'react';
 import {useValue} from '../hooks/useValue';
 import {useOnChange} from '../hooks/useOnChange';
 
-export function EnumInput<SCHEMA_TYPE extends ZodObject<any>, T extends string>({
+export function EnumInput<
+    SCHEMA_TYPE extends ZodObject<any>,
+    T extends string,
+>({
     context,
     leafPath,
     component: Component,
 }: {
     context: ContextType<SCHEMA_TYPE>;
-    leafPath: string[];
+    leafPath: [string, ...string[]];
     component: EnumFieldComponentType<T>;
 }) {
-    const options: T[] = [] 
+    const options: T[] = [];
 
-    leafPath.forEach(path => {
-        const value = (useValue<T, SCHEMA_TYPE>(
-            context.emitters,
-            context.data,
-            [path],
-        ) as T) ?? '';
+    leafPath.forEach((path) => {
+        const value =
+            (useValue<T, SCHEMA_TYPE>(context.emitters, context.data, [
+                path,
+            ]) as T) ?? '';
         options.push(value);
     });
 

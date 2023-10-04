@@ -78,6 +78,7 @@ export type FormEmittersType<SCHEMA_TYPE extends ZodObject<any>> = {
 };
 
 export type ContextType<SCHEMA_TYPE extends ZodObject<any>> = {
+    schema: ZodObject<any>;
     elementCache: FormFieldsCacheType<SCHEMA_TYPE>;
     emitters: FormEmittersType<SCHEMA_TYPE>;
     data: DeepPartial<z.infer<SCHEMA_TYPE>>;
