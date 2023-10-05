@@ -139,34 +139,29 @@ function MainForm() {
             <div>
                 Children Names
                 <form.children_names.Input>
-                    {({values, onChange}) => (
+                    {({items, onChange, addItem, removeItem}) => (
                         <div>
-                            {values.map(
+                            {items.map(
                                 (children_name: string, index: number) => (
-                                    <input
-                                        key={index}
-                                        type="text"
-                                        value={children_name}
-                                        onChange={(e) => {
-                                            const updatedValue = [...values];
-                                            updatedValue[index] =
-                                                e.target.value;
-                                            onChange(updatedValue);
-                                        }}
-                                    />
+                                    <div key={index}>
+                                        <input
+                                            type="text"
+                                            value={children_name}
+                                            onChange={(e) => {
+                                                const updatedValue = [...items];
+                                                updatedValue[index] =
+                                                    e.target.value;
+                                                onChange(updatedValue);
+                                            }}
+                                        />
+                                        <button
+                                            onClick={() => removeItem(index)}>
+                                            Remove
+                                        </button>
+                                    </div>
                                 ),
                             )}
-                            <button onClick={() => onChange([...values, ''])}>
-                                Add Field
-                            </button>
-                            <button
-                                onClick={() => {
-                                    const updatedValue = [...values];
-                                    updatedValue.pop();
-                                    onChange(updatedValue);
-                                }}>
-                                Remove Field
-                            </button>
+                            <button onClick={addItem}>Add Field</button>
                         </div>
                     )}
                 </form.children_names.Input>
