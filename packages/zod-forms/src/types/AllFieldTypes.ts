@@ -29,7 +29,9 @@ export type EnumFieldComponentType<VALUE extends string> = (props: {
     onChange: (value: VALUE) => void;
 }) => ReactElement;
 
-export type ArrayFieldComponentType<VALUE extends string | ''> = (props: {
+export type ArrayFieldItemType = string | Record<string, any> | number
+
+export type ArrayFieldComponentType<VALUE extends ArrayFieldItemType> = (props: {
     items: VALUE[];
     addItem: () => void;
     removeItem: (index: number) => void;
@@ -42,6 +44,6 @@ export type BooleanInputPropsType = InputPropsType<BooleanFieldComponentType>;
 export type EnumInputPropsType<VALUE extends string> = InputPropsType<
     EnumFieldComponentType<VALUE>
 >;
-export type ArrayInputPropsType<VALUE extends string | ''> = InputPropsType<
+export type ArrayInputPropsType<VALUE extends ArrayFieldItemType> = InputPropsType<
     ArrayFieldComponentType<VALUE>
 >;

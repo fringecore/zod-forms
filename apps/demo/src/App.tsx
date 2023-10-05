@@ -13,6 +13,13 @@ const schema = z.object({
     age: z.number(),
     isStudent: z.boolean(),
     favoriteColor: z.enum(['red', 'blue', 'green']),
+    certifications: z.array(
+        z.object({
+            institution: z.string(),
+            program: z.string(),
+            completion_year: z.number(),
+        }),
+    ),
     children_names: z.string().array(),
 });
 
@@ -135,6 +142,10 @@ function MainForm() {
                     </select>
                 )}
             </form.favoriteColor.Input>
+
+            <div>
+                Certifications
+            </div>
 
             <div>
                 Children Names
