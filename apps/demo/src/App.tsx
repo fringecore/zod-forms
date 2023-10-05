@@ -13,6 +13,7 @@ const schema = z.object({
     age: z.number(),
     isStudent: z.boolean(),
     favoriteColor: z.enum(['red', 'blue', 'green']),
+    children_names: z.string().array(),
 });
 
 function MainForm() {
@@ -125,9 +126,7 @@ function MainForm() {
                 {({value, onChange}) => (
                     <select
                         value={value}
-                        onChange={(e) =>
-                            onChange(e.target.value)
-                        }>
+                        onChange={(e) => onChange(e.target.value)}>
                         {schema.shape.favoriteColor.options.map((option) => (
                             <option key={option} value={option}>
                                 {option}
@@ -136,6 +135,42 @@ function MainForm() {
                     </select>
                 )}
             </form.favoriteColor.Input>
+
+            <div>
+                Children Names
+                <form.children_names.Input>
+                    {({values, onChange}) => (
+                        <div>
+                            {values.map(
+                                (children_name: string, index: number) => (
+                                    <input
+                                        key={index}
+                                        type="text"
+                                        value={children_name}
+                                        onChange={(e) => {
+                                            const updatedValue = [...values];
+                                            updatedValue[index] =
+                                                e.target.value;
+                                            onChange(updatedValue);
+                                        }}
+                                    />
+                                ),
+                            )}
+                            <button onClick={() => onChange([...values, ''])}>
+                                Add Field
+                            </button>
+                            <button
+                                onClick={() => {
+                                    const updatedValue = [...values];
+                                    updatedValue.pop();
+                                    onChange(updatedValue);
+                                }}>
+                                Remove Field
+                            </button>
+                        </div>
+                    )}
+                </form.children_names.Input>
+            </div>
         </>
     );
 }
