@@ -144,10 +144,6 @@ function MainForm() {
             </form.favoriteColor.Input>
 
             <div>
-                Certifications
-            </div>
-
-            <div>
                 Children Names
                 <form.children_names.Input>
                     {({items, onChange, addItem, removeItem}) => (
@@ -176,6 +172,65 @@ function MainForm() {
                         </div>
                     )}
                 </form.children_names.Input>
+            </div>
+
+            <div>
+                Certifications
+                <form.certifications.Input>
+                    {({items, onChange, addItem, removeItem}) => (
+                        <div>
+                            {items.map((certification, index) => (
+                                <div key={index}>
+                                    <input
+                                        type="text"
+                                        placeholder="Institution"
+                                        value={certification?.institution}
+                                        onChange={(e) => {
+                                            const updatedValue = [...items];
+                                            updatedValue[index] = {
+                                                ...certification,
+                                                institution: e.target.value,
+                                            };
+                                            onChange(updatedValue);
+                                        }}
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Program"
+                                        value={certification?.program}
+                                        onChange={(e) => {
+                                            const updatedValue = [...items];
+                                            updatedValue[index] = {
+                                                ...certification,
+                                                program: e.target.value,
+                                            };
+                                            onChange(updatedValue);
+                                        }}
+                                    />
+                                    <input
+                                        type="number"
+                                        placeholder="Completion Year"
+                                        value={certification?.completion_year}
+                                        onChange={(e) => {
+                                            const updatedValue = [...items];
+                                            updatedValue[index] = {
+                                                ...certification,
+                                                completion_year:
+                                                    parseInt(e.target.value) ||
+                                                    0,
+                                            };
+                                            onChange(updatedValue);
+                                        }}
+                                    />
+                                    <button onClick={() => removeItem(index)}>
+                                        Remove
+                                    </button>
+                                </div>
+                            ))}
+                            <button onClick={addItem}>Add Field</button>
+                        </div>
+                    )}
+                </form.certifications.Input>
             </div>
         </>
     );
