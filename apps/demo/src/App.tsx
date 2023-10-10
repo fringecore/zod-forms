@@ -21,6 +21,7 @@ const schema = z.object({
         }),
     ),
     children_names: z.string().array(),
+    children_ages: z.number().array(),
 });
 
 function MainForm() {
@@ -231,6 +232,37 @@ function MainForm() {
                         </div>
                     )}
                 </form.certifications.Input>
+            </div>
+
+            <div>
+                Children Ages
+                <form.children_ages.Input>
+                    {({items: children_ages, onChange, addItem, removeItem}) => (
+                        <div>
+                            {children_ages.map(
+                                (children_age: string, index: number) => (
+                                    <div key={index}>
+                                        <input
+                                            type="number"
+                                            value={children_age}
+                                            onChange={(e) => {
+                                                const updatedValue = [...children_ages];
+                                                updatedValue[index] =
+                                                    parseInt(e.target.value);
+                                                onChange(updatedValue);
+                                            }}
+                                        />
+                                        <button
+                                            onClick={() => removeItem(index)}>
+                                            Remove
+                                        </button>
+                                    </div>
+                                ),
+                            )}
+                            <button onClick={addItem}>Add Field</button>
+                        </div>
+                    )}
+                </form.children_ages.Input>
             </div>
         </>
     );

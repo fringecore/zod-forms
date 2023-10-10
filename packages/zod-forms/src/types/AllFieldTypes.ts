@@ -29,7 +29,7 @@ export type EnumFieldComponentType<VALUE extends string> = (props: {
     onChange: (value: VALUE) => void;
 }) => ReactElement;
 
-export type ArrayFieldItemType = string | Record<string, any> | number
+export type ArrayFieldItemType = string | Record<string, any> | number | null
 
 export type ArrayFieldComponentType<VALUE extends ArrayFieldItemType> = (props: {
     items: VALUE[];
