@@ -1,5 +1,5 @@
 import z from 'zod';
-import {useFormData, useZodForm} from 'zod-forms';
+import {useErrors, useFormData, useZodForm} from 'zod-forms';
 import {useSetFormData} from 'zod-forms';
 
 const schema = z.object({
@@ -10,7 +10,7 @@ const schema = z.object({
     }),
     address: z.string(),
     tomato: z.enum(['yes', 'no'] as const),
-    age: z.number(),
+    age: z.number().min(10),
     isStudent: z.boolean(),
     favoriteColor: z.enum(['red', 'blue', 'green']),
     certifications: z.array(
@@ -37,6 +37,9 @@ function MainForm() {
 
     const data = useFormData(form);
     const setFormData = useSetFormData(form);
+    const errors = useErrors(schema, data)
+
+    console.log(errors?.errors.find((err) => err.path[0] === 'age')?.message)
 
     return (
         <>
@@ -99,14 +102,17 @@ function MainForm() {
                 <form.age.Input>
                     {({value, onChange}) => {
                         return (
-                            <input
-                                className={'border-2 m-4'}
-                                type={'number'}
-                                value={value}
-                                onChange={(ev) => {
-                                    onChange(parseInt(ev.target.value));
-                                }}
-                            />
+                            <>
+                                <input
+                                    className={'border-2 m-4'}
+                                    type={'number'}
+                                    value={value}
+                                    onChange={(ev) => {
+                                        onChange(parseInt(ev.target.value));
+                                    }}
+                                />
+                                <div>{errors?.errors.find((err) => err.path[0] === 'age')?.message}</div>
+                            </>
                         );
                     }}
                 </form.age.Input>
