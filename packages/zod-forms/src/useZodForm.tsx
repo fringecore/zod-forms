@@ -1,6 +1,7 @@
 import React, {ReactElement, useEffect, useRef} from 'react';
 import {
     z,
+    ZodArray,
     ZodBoolean,
     ZodEnum,
     ZodNumber,
@@ -24,6 +25,7 @@ import {NumberInput} from './inputs/NumberInput';
 import {BooleanInput} from './inputs/BooleanInput';
 import {EnumInput} from './inputs/EnumInput';
 import {DeepPartial} from './types/DeepPartial';
+import {ArrayInput} from './inputs/ArrayInput';
 
 export function createEmitterChain<SCHEMA_TYPE extends ZodObject<any>>(
     emitters: FormEmittersType<SCHEMA_TYPE>,
@@ -111,6 +113,8 @@ export function formNode<
         return getMemoizedLeaf(context, path, BooleanInput);
     } else if (schema instanceof ZodEnum) {
         return getMemoizedLeaf(context, path, EnumInput);
+    } else if (schema instanceof ZodArray) {
+        return getMemoizedLeaf(context, path, ArrayInput);
     } else if (schema instanceof ZodObject) {
         return new Proxy({} as unknown as ZodFormFieldType<SCHEMA>, {
             get(target, key: string) {

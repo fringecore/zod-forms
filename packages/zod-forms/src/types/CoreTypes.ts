@@ -1,6 +1,7 @@
 import React from 'react';
 import {
     z,
+    ZodArray,
     ZodBoolean,
     ZodEnum,
     ZodNumber,
@@ -12,6 +13,7 @@ import {
 import {DataSymbol, EmittersSymbol, EmitterSymbolType} from '../symbols';
 import {DeepPartial} from './DeepPartial';
 import {
+    ArrayInputPropsType,
     BooleanInputPropsType,
     EnumInputPropsType,
     NumberInputPropsType,
@@ -42,6 +44,8 @@ export type ZodFormFieldType<SCHEMA_TYPE extends ZodType> =
         ? TerminateFieldType<StringInputPropsType>
         : SCHEMA_TYPE extends ZodEnum<[string, ...string[]]>
         ? TerminateFieldType<EnumInputPropsType<string>>
+        : SCHEMA_TYPE extends ZodArray<any>
+        ? TerminateFieldType<ArrayInputPropsType<any>>
         : SCHEMA_TYPE extends ZodNumber
         ? TerminateFieldType<NumberInputPropsType>
         : SCHEMA_TYPE extends ZodBoolean
@@ -60,6 +64,8 @@ export type FormFieldsCacheType<SCHEMA_TYPE extends ZodObject<any>> = {
         ? TerminateFieldType<StringInputPropsType>
         : SCHEMA_TYPE extends ZodEnum<[string, ...string[]]>
         ? TerminateFieldType<EnumInputPropsType<string>>
+        : SCHEMA_TYPE extends ZodArray<any>
+        ? TerminateFieldType<ArrayInputPropsType<any>>
         : SCHEMA_TYPE['shape'][key] extends ZodBoolean
         ? TerminateFieldType<BooleanInputPropsType>
         : SCHEMA_TYPE['shape'][key] extends ZodObject<any>
