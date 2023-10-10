@@ -30,6 +30,36 @@ export function ArrayInput<SCHEMA_TYPE extends ZodObject<any>>({
         leafPath,
     );
 
+    function handleInputChange(
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+        index: number,
+        property?: string,
+        object?: any,
+    ) {
+        const updatedValue = [...values];
+
+        if (property) {
+            const inputValue =
+                e.target.type === 'number'
+                    ? parseInt(e.target.value, 10)
+                    : e.target.value;
+            updatedValue[index] = {
+                ...object,
+                [property]: inputValue,
+            };
+            onChange(updatedValue);
+        } else {
+            const inputValue =
+                e.target.type === 'number'
+                    ? parseInt(e.target.value, 10)
+                    : e.target.value;
+
+            updatedValue[index] = inputValue;
+
+            onChange(updatedValue);
+        }
+    }
+
     const addItem = () => {
         let newItem: ArrayFieldItemType;
 
@@ -45,7 +75,7 @@ export function ArrayInput<SCHEMA_TYPE extends ZodObject<any>>({
                 newItem = '';
             }
         } else {
-            newItem = null;
+            newItem = '';
         }
 
         onChange([...values, newItem]);
@@ -60,7 +90,7 @@ export function ArrayInput<SCHEMA_TYPE extends ZodObject<any>>({
     return (
         <Component
             items={values}
-            onChange={onChange}
+            handleInputChange={handleInputChange}
             addItem={addItem}
             removeItem={removeItem}
         />

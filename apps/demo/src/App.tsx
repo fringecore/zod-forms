@@ -147,20 +147,22 @@ function MainForm() {
             <div>
                 Children Names
                 <form.children_names.Input>
-                    {({items, onChange, addItem, removeItem}) => (
+                    {({
+                        items: children_names,
+                        handleInputChange,
+                        addItem,
+                        removeItem,
+                    }) => (
                         <div>
-                            {items.map(
+                            {children_names.map(
                                 (children_name: string, index: number) => (
                                     <div key={index}>
                                         <input
                                             type="text"
                                             value={children_name}
-                                            onChange={(e) => {
-                                                const updatedValue = [...items];
-                                                updatedValue[index] =
-                                                    e.target.value;
-                                                onChange(updatedValue);
-                                            }}
+                                            onChange={(e) =>
+                                                handleInputChange(e, index)
+                                            }
                                         />
                                         <button
                                             onClick={() => removeItem(index)}>
@@ -178,50 +180,53 @@ function MainForm() {
             <div>
                 Certifications
                 <form.certifications.Input>
-                    {({items, onChange, addItem, removeItem}) => (
+                    {({
+                        items: certifications,
+                        handleInputChange,
+                        addItem,
+                        removeItem,
+                    }) => (
                         <div>
-                            {items.map((certification, index) => (
+                            {certifications.map((certification, index) => (
                                 <div key={index}>
                                     <input
                                         type="text"
                                         placeholder="Institution"
                                         value={certification?.institution}
-                                        onChange={(e) => {
-                                            const updatedValue = [...items];
-                                            updatedValue[index] = {
-                                                ...certification,
-                                                institution: e.target.value,
-                                            };
-                                            onChange(updatedValue);
-                                        }}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                e,
+                                                index,
+                                                `institution`,
+                                                certification,
+                                            )
+                                        }
                                     />
                                     <input
                                         type="text"
                                         placeholder="Program"
                                         value={certification?.program}
-                                        onChange={(e) => {
-                                            const updatedValue = [...items];
-                                            updatedValue[index] = {
-                                                ...certification,
-                                                program: e.target.value,
-                                            };
-                                            onChange(updatedValue);
-                                        }}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                e,
+                                                index,
+                                                `program`,
+                                                certification,
+                                            )
+                                        }
                                     />
                                     <input
                                         type="number"
                                         placeholder="Completion Year"
                                         value={certification?.completion_year}
-                                        onChange={(e) => {
-                                            const updatedValue = [...items];
-                                            updatedValue[index] = {
-                                                ...certification,
-                                                completion_year:
-                                                    parseInt(e.target.value) ||
-                                                    0,
-                                            };
-                                            onChange(updatedValue);
-                                        }}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                e,
+                                                index,
+                                                `completion_year`,
+                                                certification,
+                                            )
+                                        }
                                     />
                                     <button onClick={() => removeItem(index)}>
                                         Remove
@@ -237,20 +242,22 @@ function MainForm() {
             <div>
                 Children Ages
                 <form.children_ages.Input>
-                    {({items: children_ages, onChange, addItem, removeItem}) => (
+                    {({
+                        items: children_ages,
+                        handleInputChange,
+                        addItem,
+                        removeItem,
+                    }) => (
                         <div>
                             {children_ages.map(
-                                (children_age: string, index: number) => (
+                                (children_age: number, index: number) => (
                                     <div key={index}>
                                         <input
                                             type="number"
                                             value={children_age}
-                                            onChange={(e) => {
-                                                const updatedValue = [...children_ages];
-                                                updatedValue[index] =
-                                                    parseInt(e.target.value);
-                                                onChange(updatedValue);
-                                            }}
+                                            onChange={(e) =>
+                                                handleInputChange(e, index)
+                                            }
                                         />
                                         <button
                                             onClick={() => removeItem(index)}>
