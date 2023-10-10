@@ -149,7 +149,7 @@ function MainForm() {
                 <form.children_names.Input>
                     {({
                         items: children_names,
-                        handleInputChange,
+                        onChange,
                         addItem,
                         removeItem,
                     }) => (
@@ -160,9 +160,7 @@ function MainForm() {
                                         <input
                                             type="text"
                                             value={children_name}
-                                            onChange={(e) =>
-                                                handleInputChange(e, index)
-                                            }
+                                            onChange={(e) => onChange(e, index)}
                                         />
                                         <button
                                             onClick={() => removeItem(index)}>
@@ -182,7 +180,7 @@ function MainForm() {
                 <form.certifications.Input>
                     {({
                         items: certifications,
-                        handleInputChange,
+                        onChange,
                         addItem,
                         removeItem,
                     }) => (
@@ -194,7 +192,7 @@ function MainForm() {
                                         placeholder="Institution"
                                         value={certification?.institution}
                                         onChange={(e) =>
-                                            handleInputChange(
+                                            onChange(
                                                 e,
                                                 index,
                                                 `institution`,
@@ -207,7 +205,7 @@ function MainForm() {
                                         placeholder="Program"
                                         value={certification?.program}
                                         onChange={(e) =>
-                                            handleInputChange(
+                                            onChange(
                                                 e,
                                                 index,
                                                 `program`,
@@ -220,7 +218,7 @@ function MainForm() {
                                         placeholder="Completion Year"
                                         value={certification?.completion_year}
                                         onChange={(e) =>
-                                            handleInputChange(
+                                            onChange(
                                                 e,
                                                 index,
                                                 `completion_year`,
@@ -244,7 +242,7 @@ function MainForm() {
                 <form.children_ages.Input>
                     {({
                         items: children_ages,
-                        handleInputChange,
+                        onChange,
                         addItem,
                         removeItem,
                     }) => (
@@ -255,9 +253,7 @@ function MainForm() {
                                         <input
                                             type="number"
                                             value={children_age}
-                                            onChange={(e) =>
-                                                handleInputChange(e, index)
-                                            }
+                                            onChange={(e) => onChange(e, index)}
                                         />
                                         <button
                                             onClick={() => removeItem(index)}>

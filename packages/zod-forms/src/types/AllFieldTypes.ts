@@ -36,7 +36,7 @@ export type ArrayFieldComponentType<VALUE extends ArrayFieldItemType> =
         items: VALUE[];
         addItem: () => void;
         removeItem: (index: number) => void;
-        handleInputChange: (
+        onChange: (
             e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
             index: number,
             property?: string,

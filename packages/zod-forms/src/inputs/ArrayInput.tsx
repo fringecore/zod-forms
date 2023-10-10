@@ -24,13 +24,13 @@ export function ArrayInput<SCHEMA_TYPE extends ZodObject<any>>({
             leafPath,
         ) ?? [];
 
-    const onChange = useOnChange<ArrayFieldItemType[], any>(
+    const handleInputChange = useOnChange<ArrayFieldItemType[], any>(
         context.emitters,
         context.data,
         leafPath,
     );
 
-    function handleInputChange(
+    function onChange(
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
         index: number,
         property?: string,
@@ -41,22 +41,26 @@ export function ArrayInput<SCHEMA_TYPE extends ZodObject<any>>({
         if (property) {
             const inputValue =
                 e.target.type === 'number'
-                    ? parseInt(e.target.value, 10)
+                    ? isNaN(parseInt(e.target.value))
+                        ? 0
+                        : parseInt(e.target.value, 10)
                     : e.target.value;
             updatedValue[index] = {
                 ...object,
                 [property]: inputValue,
             };
-            onChange(updatedValue);
+            handleInputChange(updatedValue);
         } else {
             const inputValue =
                 e.target.type === 'number'
-                    ? parseInt(e.target.value, 10)
+                    ? isNaN(parseInt(e.target.value))
+                        ? 0
+                        : parseInt(e.target.value, 10)
                     : e.target.value;
 
             updatedValue[index] = inputValue;
 
-            onChange(updatedValue);
+            handleInputChange(updatedValue);
         }
     }
 
@@ -78,19 +82,19 @@ export function ArrayInput<SCHEMA_TYPE extends ZodObject<any>>({
             newItem = '';
         }
 
-        onChange([...values, newItem]);
+        handleInputChange([...values, newItem]);
     };
 
     const removeItem = (index: number) => {
         const updatedValues = [...values];
         updatedValues.splice(index, 1);
-        onChange(updatedValues);
+        handleInputChange(updatedValues);
     };
 
     return (
         <Component
             items={values}
-            handleInputChange={handleInputChange}
+            onChange={onChange}
             addItem={addItem}
             removeItem={removeItem}
         />
