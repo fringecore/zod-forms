@@ -180,7 +180,7 @@ function MainForm() {
                 </form.children_names.Inputs>
             </div>
 
-            {/*<div>
+            <div>
                 Certifications
                 <form.certifications.Inputs>
                     {({
@@ -271,7 +271,7 @@ function MainForm() {
                         </>
                     )}
                 </form.children_ages.Inputs>
-                                </div>*/}
+            </div>
         </>
     );
 }
