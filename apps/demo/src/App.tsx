@@ -167,6 +167,20 @@ function MainForm() {
                                             value={children_name}
                                             onChange={(e) => onChange(e, index)}
                                         />
+                                        {/*<children_name.Input>
+                                            {({value, onChange}) => (
+                                                <input
+                                                    type="text"
+                                                    value={value}
+                                                    onChange={(ev) =>
+                                                        onChange(
+                                                            ev,
+                                                            index
+                                                        )
+                                                    }
+                                                />
+                                            )}
+                                        </children_name.Input>*/}
                                         <button
                                             onClick={() => removeItem(index)}>
                                             Remove
@@ -180,7 +194,7 @@ function MainForm() {
                 </form.children_names.Inputs>
             </div>
 
-            <div>
+            {/*<div>
                 Certifications
                 <form.certifications.Inputs>
                     {({
@@ -271,7 +285,7 @@ function MainForm() {
                         </>
                     )}
                 </form.children_ages.Inputs>
-            </div>
+                                </div>*/}
         </>
     );
 }

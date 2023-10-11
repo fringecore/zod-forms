@@ -97,6 +97,7 @@ export function getArrayMemoizedLeaf<
 >(
     context: ContextType<SCHEMA_TYPE>,
     path: [string, ...string[]],
+    schema: SCHEMA,
     InputComponent: (props: {
         context: ContextType<SCHEMA_TYPE>;
         leafPath: [string, ...string[]];
@@ -109,7 +110,23 @@ export function getArrayMemoizedLeaf<
         const components = {
             Inputs: (props: ArrayInputPropsType<any>) => {
                 const stableComponent = useRef(
-                    'children' in props ? props.children : props.component,
+                    'children' in props
+                        ? new Proxy({} as unknown as RootFieldsType<SCHEMA_TYPE>, {
+                              get(target, key: string) {
+                                  return formNode(context, schema, [
+                                      ...path,
+                                      key,
+                                  ]);
+                              },
+                          })
+                        : new Proxy({} as unknown as RootFieldsType<SCHEMA_TYPE>, {
+                              get(target, key: string) {
+                                  return formNode(context, schema, [
+                                      ...path,
+                                      key,
+                                  ]);
+                              },
+                          }),
                 ).current;
 
                 return (
@@ -157,7 +174,7 @@ export function formNode<
     } else if (schema instanceof ZodEnum) {
         return getMemoizedLeaf(context, path, EnumInput);
     } else if (schema instanceof ZodArray) {
-        return getArrayMemoizedLeaf(context, path, ArrayInput);
+        return getArrayMemoizedLeaf(context, path, schema, ArrayInput);
     } else if (schema instanceof ZodObject) {
         return new Proxy({} as unknown as ZodFormFieldType<SCHEMA>, {
             get(target, key: string) {
