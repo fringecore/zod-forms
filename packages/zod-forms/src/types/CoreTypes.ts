@@ -26,6 +26,10 @@ export interface TerminateFieldType<INPUT_PROPS> {
     Input: React.FC<INPUT_PROPS>;
 }
 
+export interface ArrayTerminateFieldType<INPUT_PROPS> {
+    Inputs: React.FC<INPUT_PROPS>;
+}
+
 export interface RootSymbolFields<SCHEMA_TYPE extends ZodObject<any>> {
     [EmittersSymbol]: FormEmittersType<SCHEMA_TYPE>;
     [DataSymbol]: DeepPartial<z.infer<SCHEMA_TYPE>>;
@@ -45,7 +49,7 @@ export type ZodFormFieldType<SCHEMA_TYPE extends ZodType> =
         : SCHEMA_TYPE extends ZodEnum<[string, ...string[]]>
         ? TerminateFieldType<EnumInputPropsType<string>>
         : SCHEMA_TYPE extends ZodArray<any>
-        ? TerminateFieldType<ArrayInputPropsType<any>>
+        ? ArrayTerminateFieldType<ArrayInputPropsType<any>>
         : SCHEMA_TYPE extends ZodNumber
         ? TerminateFieldType<NumberInputPropsType>
         : SCHEMA_TYPE extends ZodBoolean
@@ -65,7 +69,7 @@ export type FormFieldsCacheType<SCHEMA_TYPE extends ZodObject<any>> = {
         : SCHEMA_TYPE extends ZodEnum<[string, ...string[]]>
         ? TerminateFieldType<EnumInputPropsType<string>>
         : SCHEMA_TYPE extends ZodArray<any>
-        ? TerminateFieldType<ArrayInputPropsType<any>>
+        ? ArrayTerminateFieldType<ArrayInputPropsType<any>>
         : SCHEMA_TYPE['shape'][key] extends ZodBoolean
         ? TerminateFieldType<BooleanInputPropsType>
         : SCHEMA_TYPE['shape'][key] extends ZodObject<any>

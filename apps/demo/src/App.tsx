@@ -111,7 +111,6 @@ function MainForm() {
                                         onChange(parseInt(ev.target.value));
                                     }}
                                 />
-                                <div>{errors?.errors.find((err) => err.path[0] === 'age')?.message}</div>
                             </>
                         );
                     }}
@@ -152,7 +151,7 @@ function MainForm() {
 
             <div>
                 Children Names
-                <form.children_names.Input>
+                <form.children_names.Inputs>
                     {({
                         items: children_names,
                         onChange,
@@ -178,12 +177,12 @@ function MainForm() {
                             <button onClick={addItem}>Add Field</button>
                         </div>
                     )}
-                </form.children_names.Input>
+                </form.children_names.Inputs>
             </div>
 
             <div>
                 Certifications
-                <form.certifications.Input>
+                <form.certifications.Inputs>
                     {({
                         items: certifications,
                         onChange,
@@ -240,12 +239,12 @@ function MainForm() {
                             <button onClick={addItem}>Add Field</button>
                         </div>
                     )}
-                </form.certifications.Input>
+                </form.certifications.Inputs>
             </div>
 
             <div>
                 Children Ages
-                <form.children_ages.Input>
+                <form.children_ages.Inputs>
                     {({
                         items: children_ages,
                         onChange,
@@ -271,7 +270,7 @@ function MainForm() {
                             <button onClick={addItem}>Add Field</button>
                         </div>
                     )}
-                </form.children_ages.Input>
+                </form.children_ages.Inputs>
             </div>
         </>
     );
