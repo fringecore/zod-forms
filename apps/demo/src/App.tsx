@@ -37,9 +37,9 @@ function MainForm() {
 
     const data = useFormData(form);
     const setFormData = useSetFormData(form);
-    const errors = useErrors(schema, data)
+    const errors = useErrors(schema, data);
 
-    console.log(errors?.errors.find((err) => err.path[0] === 'age')?.message)
+    console.log(errors?.errors.find((err) => err.path[0] === 'age')?.message);
 
     return (
         <>
@@ -158,7 +158,7 @@ function MainForm() {
                         addItem,
                         removeItem,
                     }) => (
-                        <div>
+                        <>
                             {children_names.map(
                                 (children_name: string, index: number) => (
                                     <div key={index}>
@@ -175,12 +175,12 @@ function MainForm() {
                                 ),
                             )}
                             <button onClick={addItem}>Add Field</button>
-                        </div>
+                        </>
                     )}
                 </form.children_names.Inputs>
             </div>
 
-            <div>
+            {/*<div>
                 Certifications
                 <form.certifications.Inputs>
                     {({
@@ -189,7 +189,7 @@ function MainForm() {
                         addItem,
                         removeItem,
                     }) => (
-                        <div>
+                        <>
                             {certifications.map((certification, index) => (
                                 <div key={index}>
                                     <input
@@ -237,7 +237,7 @@ function MainForm() {
                                 </div>
                             ))}
                             <button onClick={addItem}>Add Field</button>
-                        </div>
+                        </>
                     )}
                 </form.certifications.Inputs>
             </div>
@@ -251,7 +251,7 @@ function MainForm() {
                         addItem,
                         removeItem,
                     }) => (
-                        <div>
+                        <>
                             {children_ages.map(
                                 (children_age: number, index: number) => (
                                     <div key={index}>
@@ -268,10 +268,10 @@ function MainForm() {
                                 ),
                             )}
                             <button onClick={addItem}>Add Field</button>
-                        </div>
+                        </>
                     )}
                 </form.children_ages.Inputs>
-            </div>
+                                </div>*/}
         </>
     );
 }
