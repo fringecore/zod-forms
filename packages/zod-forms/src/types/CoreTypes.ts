@@ -35,6 +35,8 @@ export interface RootSymbolFields<SCHEMA_TYPE extends ZodObject<any>> {
     [DataSymbol]: DeepPartial<z.infer<SCHEMA_TYPE>>;
 }
 
+export type ZodFieldArrayType = ZodNumber | ZodObject<any> | ZodString
+
 export type ZodFormFieldType<SCHEMA_TYPE extends ZodType> =
     SCHEMA_TYPE extends ZodOptional<infer InnerShape>
         ? ZodFormFieldType<InnerShape>
@@ -49,6 +51,7 @@ export type ZodFormFieldType<SCHEMA_TYPE extends ZodType> =
         : SCHEMA_TYPE extends ZodEnum<[string, ...string[]]>
         ? TerminateFieldType<EnumInputPropsType<string>>
         : SCHEMA_TYPE extends ZodArray<any>
+        //? ArrayTerminateFieldType<ArrayInputPropsType<ZodFormFieldType<ZodFieldArrayType>>>
         ? ArrayTerminateFieldType<ArrayInputPropsType<any>>
         : SCHEMA_TYPE extends ZodNumber
         ? TerminateFieldType<NumberInputPropsType>
@@ -69,6 +72,7 @@ export type FormFieldsCacheType<SCHEMA_TYPE extends ZodObject<any>> = {
         : SCHEMA_TYPE extends ZodEnum<[string, ...string[]]>
         ? TerminateFieldType<EnumInputPropsType<string>>
         : SCHEMA_TYPE extends ZodArray<any>
+        //? ArrayTerminateFieldType<ArrayInputPropsType<ZodFormFieldType<ZodFieldArrayType>>>
         ? ArrayTerminateFieldType<ArrayInputPropsType<any>>
         : SCHEMA_TYPE['shape'][key] extends ZodBoolean
         ? TerminateFieldType<BooleanInputPropsType>

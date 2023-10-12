@@ -160,7 +160,7 @@ function MainForm() {
                     }) => (
                         <>
                             {children_names.map(
-                                (children_name: string, index: number) => (
+                                (children_name, index) => (
                                     <div key={index}>
                                         <input
                                             type="text"
@@ -267,7 +267,7 @@ function MainForm() {
                     }) => (
                         <>
                             {children_ages.map(
-                                (children_age: number, index: number) => (
+                                (children_age, index) => (
                                     <div key={index}>
                                         <input
                                             type="number"
