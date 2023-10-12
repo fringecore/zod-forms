@@ -97,7 +97,7 @@ export function getArrayMemoizedLeaf<
 >(
     context: ContextType<SCHEMA_TYPE>,
     path: [string, ...string[]],
-    schema: SCHEMA,
+    schema: any,
     InputComponent: (props: {
         context: ContextType<SCHEMA_TYPE>;
         leafPath: [string, ...string[]];
@@ -110,24 +110,14 @@ export function getArrayMemoizedLeaf<
         const components = {
             Inputs: (props: ArrayInputPropsType<any>) => {
                 const stableComponent = useRef(
-                    'children' in props
-                        ? new Proxy({} as unknown as RootFieldsType<SCHEMA_TYPE>, {
-                              get(target, key: string) {
-                                  return formNode(context, schema, [
-                                      ...path,
-                                      key,
-                                  ]);
-                              },
-                          })
-                        : new Proxy({} as unknown as RootFieldsType<SCHEMA_TYPE>, {
-                              get(target, key: string) {
-                                  return formNode(context, schema, [
-                                      ...path,
-                                      key,
-                                  ]);
-                              },
-                          }),
+                    'children' in props ? props.children : props.component,
                 ).current;
+
+                const formKey = formNode(context, schema._def.type, path);
+                
+                console.log(schema._def.type)
+                console.log(path)
+                console.log(schema)
 
                 return (
                     <InputComponent
@@ -159,6 +149,7 @@ export function formNode<
     schema: SCHEMA,
     path: [string, ...string[]],
 ): ZodFormFieldType<SCHEMA> {
+    console.log(schema)
     if (schema instanceof ZodOptional) {
         return formNode(
             context,
@@ -191,6 +182,7 @@ export function formRoot<SCHEMA_TYPE extends ZodObject<any>>(
     schema: SCHEMA_TYPE,
     path: string[],
 ): RootFieldsType<SCHEMA_TYPE> {
+    console.log(schema.shape)
     return new Proxy({} as unknown as RootFieldsType<SCHEMA_TYPE>, {
         get(target, key) {
             if (typeof key === 'symbol') {
