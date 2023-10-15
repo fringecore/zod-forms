@@ -31,35 +31,20 @@ export function ArrayInput<SCHEMA_TYPE extends ZodObject<any>>({
     );
 
     function onChange(
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+        value: string | number,
         index: number,
         property?: string,
         object?: any,
     ) {
         const updatedValue = [...values];
-
         if (property) {
-            const inputValue =
-                e.target.type === 'number'
-                    ? isNaN(parseInt(e.target.value))
-                        ? 0
-                        : parseInt(e.target.value, 10)
-                    : e.target.value;
             updatedValue[index] = {
                 ...object,
-                [property]: inputValue,
+                [property]: value,
             };
             handleInputChange(updatedValue);
         } else {
-            const inputValue =
-                e.target.type === 'number'
-                    ? isNaN(parseInt(e.target.value))
-                        ? 0
-                        : parseInt(e.target.value, 10)
-                    : e.target.value;
-
-            updatedValue[index] = inputValue;
-
+            updatedValue[index] = value;
             handleInputChange(updatedValue);
         }
     }

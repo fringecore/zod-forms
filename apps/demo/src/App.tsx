@@ -165,7 +165,7 @@ function MainForm() {
                                         <input
                                             type="text"
                                             value={children_name}
-                                            onChange={(e) => onChange(e, index)}
+                                            onChange={(e) => onChange(e.target.value, index)}
                                         />
                                         {/*<children_name.Input>
                                             {({value, onChange}) => (
@@ -212,7 +212,7 @@ function MainForm() {
                                         value={certification?.institution}
                                         onChange={(e) =>
                                             onChange(
-                                                e,
+                                                e.target.value,
                                                 index,
                                                 `institution`,
                                                 certification,
@@ -225,7 +225,7 @@ function MainForm() {
                                         value={certification?.program}
                                         onChange={(e) =>
                                             onChange(
-                                                e,
+                                                e.target.value,
                                                 index,
                                                 `program`,
                                                 certification,
@@ -238,7 +238,7 @@ function MainForm() {
                                         value={certification?.completion_year}
                                         onChange={(e) =>
                                             onChange(
-                                                e,
+                                                parseInt(e.target.value),
                                                 index,
                                                 `completion_year`,
                                                 certification,
@@ -272,7 +272,7 @@ function MainForm() {
                                         <input
                                             type="number"
                                             value={children_age}
-                                            onChange={(e) => onChange(e, index)}
+                                            onChange={(e) => onChange(parseInt(e.target.value), index)}
                                         />
                                         <button
                                             onClick={() => removeItem(index)}>
