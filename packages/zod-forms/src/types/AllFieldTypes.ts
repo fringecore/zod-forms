@@ -1,4 +1,5 @@
 import {ReactElement} from 'react';
+import {TerminateFieldType} from './CoreTypes';
 
 export type InputPropsType<COMPONENT_TYPE> =
     | {
@@ -31,6 +32,29 @@ export type EnumFieldComponentType<VALUE extends string> = (props: {
 
 export type ArrayFieldItemType = string | Record<string, any> | number;
 
+export type StringInputPropsType = InputPropsType<StringFieldComponentType>;
+export type NumberInputPropsType = InputPropsType<NumberFieldComponentType>;
+export type BooleanInputPropsType = InputPropsType<BooleanFieldComponentType>;
+export type EnumInputPropsType<VALUE extends string> = InputPropsType<
+    EnumFieldComponentType<VALUE>
+>;
+
+/*export type ArrayFieldComponentType<VALUE extends ArrayFieldItemType> =
+    (props: {
+        items: VALUE[];
+        addItem: () => void;
+        removeItem: (index: number) => void;
+        onChange: (
+            e: string | number,
+            index: number,
+            property?: string,
+            object?: any,
+        ) => void;
+    }) => ReactElement;
+
+export type ArrayInputPropsType<VALUE extends any> = VALUE extends string ? InputPropsType<
+    ArrayFieldComponentType<TerminateFieldType<StringInputPropsType>>> : InputPropsType<ArrayFieldComponentType<TerminateFieldType<NumberInputPropsType>>>*/
+
 export type ArrayFieldComponentType<VALUE extends ArrayFieldItemType> =
     (props: {
         items: VALUE[];
@@ -44,11 +68,5 @@ export type ArrayFieldComponentType<VALUE extends ArrayFieldItemType> =
         ) => void;
     }) => React.ReactElement;
 
-export type StringInputPropsType = InputPropsType<StringFieldComponentType>;
-export type NumberInputPropsType = InputPropsType<NumberFieldComponentType>;
-export type BooleanInputPropsType = InputPropsType<BooleanFieldComponentType>;
-export type EnumInputPropsType<VALUE extends string> = InputPropsType<
-    EnumFieldComponentType<VALUE>
->;
 export type ArrayInputPropsType<VALUE extends ArrayFieldItemType> =
     InputPropsType<ArrayFieldComponentType<VALUE>>;

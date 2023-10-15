@@ -1,6 +1,8 @@
 import z from 'zod';
 import {useErrors, useFormData, useZodForm} from 'zod-forms';
+//import {TerminateFieldType, useErrors, useFormData, useZodForm} from 'zod-forms';
 import {useSetFormData} from 'zod-forms';
+//import { StringInputPropsType } from 'zod-forms/dist/types/AllFieldTypes';
 
 const schema = z.object({
     name: z.object({
@@ -180,17 +182,17 @@ function MainForm() {
             </div>
 
             {/*<form.children_names.Inputs>
-                {({items: children_names, addItem, removeItem}) => (
+                {({items: children_names, addItem, removeItem}: { items: TerminateFieldType<StringInputPropsType>[], addItem: () => void, removeItem: (index: number) => void}) => (
                     <>
-                        {children_names.map((children_name, index) => (
+                        {children_names.map((children_name: TerminateFieldType<StringInputPropsType>, index: number) => (
                             <div key={index}>
                                 <children_name.Input>
-                                    {({value, onChange}) => (
+                                    {({value, onChange}: {value: string, onChange: (value: string, index: number) => void;}) => (
                                         <input
                                             type="text"
                                             value={value}
                                             onChange={(ev) =>
-                                                onChange(ev, index)
+                                                onChange(ev.target.value, index)
                                             }
                                         />
                                     )}
