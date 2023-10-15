@@ -109,16 +109,16 @@ export function getArrayMemoizedLeaf<
 
     if (!leaf) {
         const components = {
-            Inputs: (props: ArrayInputPropsType<ZodFormFieldType<ZodFieldArrayType>>) => {
+            Inputs: (props: ArrayInputPropsType<any>) => {
                 const stableComponent = useRef(
                     'children' in props ? props.children : props.component,
                 ).current;
 
-                const formKey = formRoot(context, schema, path)
+                const formKey = schema._def.type instanceof ZodString ? { item: getMemoizedLeaf(context, [...path, "item"], StringInput)} : { item: getMemoizedLeaf(context, [...path, "item"], NumberInput) };
 
                 console.log(schema._def.type)
-                console.log(path)
-                console.log(stableComponent)
+                //console.log(path)
+                console.log(formKey)
 
                 return (
                     <InputComponent
@@ -182,7 +182,23 @@ export function formRoot<SCHEMA_TYPE extends ZodObject<any>>(
     context: ContextType<SCHEMA_TYPE>,
     schema: SCHEMA_TYPE,
     path: string[],
+    key: string = ""
 ): RootFieldsType<SCHEMA_TYPE> {
+    console.log(new Proxy({} as unknown as RootFieldsType<SCHEMA_TYPE>, {
+        get(target, key) {
+            console.log(key)
+            if (typeof key === 'symbol') {
+                if (key === DataSymbol) {
+                    return context.data;
+                } else if (key === EmittersSymbol) {
+                    return context.emitters;
+                } else {
+                    throw new Error('symbol not recognized.');
+                }
+            }
+            return formNode(context, schema.shape[key], [...path, key] as any);
+        },
+    }))
     return new Proxy({} as unknown as RootFieldsType<SCHEMA_TYPE>, {
         get(target, key) {
             console.log(key)

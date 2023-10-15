@@ -159,40 +159,51 @@ function MainForm() {
                         removeItem,
                     }) => (
                         <>
-                            {children_names.map(
-                                (children_name, index) => (
-                                    <div key={index}>
-                                        <input
-                                            type="text"
-                                            value={children_name}
-                                            onChange={(e) => onChange(e.target.value, index)}
-                                        />
-                                        {/*<children_name.Input>
-                                            {({value, onChange}) => (
-                                                <input
-                                                    type="text"
-                                                    value={value}
-                                                    onChange={(ev) =>
-                                                        onChange(
-                                                            ev,
-                                                            index
-                                                        )
-                                                    }
-                                                />
-                                            )}
-                                        </children_name.Input>*/}
-                                        <button
-                                            onClick={() => removeItem(index)}>
-                                            Remove
-                                        </button>
-                                    </div>
-                                ),
-                            )}
+                            {children_names.map((children_name, index) => (
+                                <div key={index}>
+                                    <input
+                                        type="text"
+                                        value={children_name}
+                                        onChange={(e) =>
+                                            onChange(e.target.value, index)
+                                        }
+                                    />
+                                    <button onClick={() => removeItem(index)}>
+                                        Remove
+                                    </button>
+                                </div>
+                            ))}
                             <button onClick={addItem}>Add Field</button>
                         </>
                     )}
                 </form.children_names.Inputs>
             </div>
+
+            {/*<form.children_names.Inputs>
+                {({items: children_names, addItem, removeItem}) => (
+                    <>
+                        {children_names.map((children_name, index) => (
+                            <div key={index}>
+                                <children_name.Input>
+                                    {({value, onChange}) => (
+                                        <input
+                                            type="text"
+                                            value={value}
+                                            onChange={(ev) =>
+                                                onChange(ev, index)
+                                            }
+                                        />
+                                    )}
+                                </children_name.Input>
+                                <button onClick={() => removeItem(index)}>
+                                    Remove
+                                </button>
+                            </div>
+                        ))}
+                        <button onClick={addItem}>Add Field</button>
+                    </>
+                )}
+            </form.children_names.Inputs>*/}
 
             {/*<div>
                 Certifications
